@@ -61,7 +61,7 @@ func hmacSecret() jwt.Keyfunc {
 }
 
 func abortRequest(context *gin.Context, err error) {
-	context.JSON(401, "Unauthorized")
+	context.JSON(401, "unauthorized")
 	fmt.Println("Error while parsing token: ", err)
 	context.Abort()
 }
