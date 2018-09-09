@@ -27,6 +27,31 @@ func main() {
 		user, _ := c.Get("User")
 		c.JSON(200, "Authenticated as: "+user.(string))
 	})
+	protectedApiRouter.PUT("/meal", func(c *gin.Context) {
+		var meal model.Meal
+		err := c.MustBindWith(&meal, binding.JSON)
+		if err != nil {
+			fmt.Println("Could not parse meal", err)
+			c.JSON(400, err.Error())
+			return
+		}
+
+		err = validateMeal(meal, true)
+		if err != nil {
+			fmt.Println("Error:", err)
+			c.JSON(400, "invalid meal object")
+			return
+		}
+
+		err = mealDao.Update(meal)
+		if err != nil {
+			fmt.Println("Error when updating meal:", err)
+			c.JSON(500, "error when updating meal: "+err.Error())
+			return
+		}
+
+		c.JSON(200, "updated")
+	})
 	protectedApiRouter.POST("/meal", func(c *gin.Context) {
 		var meal model.Meal
 		err := c.MustBindWith(&meal, binding.JSON)
@@ -35,7 +60,7 @@ func main() {
 			return
 		}
 
-		err = validateMeal(meal)
+		err = validateMeal(meal, false)
 		if err != nil {
 			c.JSON(400, err.Error())
 			return
@@ -54,7 +79,7 @@ func main() {
 			return
 		}
 
-		meal := mealDao.GetById(int(id))
+		meal := mealDao.GetById(id)
 
 		if meal != nil {
 			c.JSON(200, *meal)
@@ -62,38 +87,35 @@ func main() {
 			c.JSON(404, "not found")
 		}
 	})
-	protectedApiRouter.PUT("/meal", func(c *gin.Context) {
-		var meal model.Meal
-		err := c.MustBindWith(&meal, binding.JSON)
+	protectedApiRouter.DELETE("/meal/:id", func(c *gin.Context) {
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 		if err != nil {
-			fmt.Println("Could not parse meal", err)
-			c.JSON(400, err.Error())
-			return
-		}
-		if meal.ID < 1 {
-			fmt.Println("Invalid meal ID:", meal.ID)
-			c.JSON(400, "invalid meal ID")
-			return
-		}
-		if len(meal.Name) < 1 {
-			fmt.Println("Invalid meal name:", meal.Name)
-			c.JSON(400, "meal name can't be empty")
+			fmt.Println("Error:", err)
+			c.JSON(400, "id missing")
 			return
 		}
 
-		err = mealDao.Update(meal)
+		mealDeleted, err := mealDao.Delete(id)
 		if err != nil {
-			fmt.Println("Error when updating meal:", err)
-			c.JSON(500, "error when updating meal: " + err.Error())
+			fmt.Println("Error deleting meal:", err)
+			c.JSON(500, "error while deleting meal")
 			return
 		}
-
-		c.JSON(200, "updated")
+		if mealDeleted {
+			c.JSON(200, "meal deleted")
+		} else {
+			c.JSON(404, "meal not found")
+		}
 	})
 
 	router.Run(":8080")
 }
-func validateMeal(meal model.Meal) error {
+func validateMeal(meal model.Meal, checkId bool) error {
+	if checkId {
+		if meal.ID < 1 {
+			return fmt.Errorf("missing ID")
+		}
+	}
 	if len(meal.Name) < 1 {
 		return fmt.Errorf("missing meal name")
 	}

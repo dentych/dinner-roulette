@@ -42,7 +42,7 @@ func (dao *MealDao) GetAll() []model.Meal {
 	return meals
 }
 
-func (dao *MealDao) GetById(id int) *model.Meal {
+func (dao *MealDao) GetById(id int64) *model.Meal {
 	db, err := GetConnection()
 	if err != nil {
 		fmt.Println("Error", err)
@@ -73,4 +73,28 @@ func (dao *MealDao) Update(meal model.Meal) error {
 	}
 
 	return nil
+}
+func (dao *MealDao) Delete(id int64) (bool, error) {
+	db, err := GetConnection()
+	if err != nil {
+		fmt.Println("Database error:", err)
+		return false, err
+	}
+
+	sql := "DELETE FROM meal WHERE id = $1"
+	result, err := db.Exec(sql, id)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return false, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return false, err
+	}
+	if rowsAffected < 1 {
+		fmt.Println("")
+		return false, nil
+	}
+	return true, nil
 }
