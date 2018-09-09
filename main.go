@@ -3,16 +3,25 @@ package main
 import (
 	"fmt"
 	"github.com/dentych/dinner-dash/database"
+	"github.com/dentych/dinner-dash/logging"
 	"github.com/dentych/dinner-dash/middleware"
 	"github.com/dentych/dinner-dash/model"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	_ "github.com/lib/pq"
+	"log"
 	"net/http"
 	"strconv"
 )
 
+var (
+	InfoLog *log.Logger
+	ErrorLog *log.Logger
+)
+
 func main() {
+	logging.Init()
+
 	router := gin.Default()
 
 	mealDao := database.MealDao{}
@@ -31,21 +40,21 @@ func main() {
 		var meal model.Meal
 		err := c.MustBindWith(&meal, binding.JSON)
 		if err != nil {
-			fmt.Println("Could not parse meal", err)
+			logging.Error.Printf("Could not parse meal: %s", err)
 			c.JSON(400, err.Error())
 			return
 		}
 
 		err = validateMeal(meal, true)
 		if err != nil {
-			fmt.Println("Error:", err)
+			logging.Info.Printf("Could not validate meal object: %s", err)
 			c.JSON(400, "invalid meal object")
 			return
 		}
 
 		err = mealDao.Update(meal)
 		if err != nil {
-			fmt.Println("Error when updating meal:", err)
+			logging.Error.Printf("Error when updating meal: %s", err)
 			c.JSON(500, "error when updating meal: "+err.Error())
 			return
 		}
@@ -56,7 +65,7 @@ func main() {
 		var meal model.Meal
 		err := c.MustBindWith(&meal, binding.JSON)
 		if err != nil {
-			fmt.Println("Error:", err)
+			logging.Error.Printf("Error: %s", err)
 			return
 		}
 
@@ -74,7 +83,7 @@ func main() {
 		idAsString := c.Param("id")
 		id, err := strconv.ParseInt(idAsString, 10, 64)
 		if err != nil {
-			fmt.Println("Error:", err)
+			logging.Error.Printf("Error: %s", err)
 			c.JSON(400, "ID can't be parsed as int")
 			return
 		}
@@ -90,14 +99,14 @@ func main() {
 	protectedApiRouter.DELETE("/meal/:id", func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 		if err != nil {
-			fmt.Println("Error:", err)
-			c.JSON(400, "id missing")
+			logging.Error.Printf("Error: %s", err)
+			c.JSON(400, "invalid or missing id missing from URL path (/api/meal/{id})")
 			return
 		}
 
 		mealDeleted, err := mealDao.Delete(id)
 		if err != nil {
-			fmt.Println("Error deleting meal:", err)
+			logging.Error.Printf("Error deleting meal: %s", err)
 			c.JSON(500, "error while deleting meal")
 			return
 		}

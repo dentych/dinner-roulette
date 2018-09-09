@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"github.com/dentych/dinner-dash/logging"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"os"
@@ -62,6 +63,6 @@ func hmacSecret() jwt.Keyfunc {
 
 func abortRequest(context *gin.Context, err error) {
 	context.JSON(401, "unauthorized")
-	fmt.Println("Error while parsing token: ", err)
+	logging.Info.Println("Error while parsing token: ", err)
 	context.Abort()
 }
