@@ -58,3 +58,19 @@ func (dao *MealDao) GetById(id int) *model.Meal {
 
 	return &meal
 }
+func (dao *MealDao) Update(meal model.Meal) error {
+	db, err := GetConnection()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return err
+	}
+
+	sql := "UPDATE meal SET name = $1, url = $2 WHERE id = $3"
+	_, err = db.Exec(sql, meal.Name, meal.Url, meal.ID)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return err
+	}
+
+	return nil
+}

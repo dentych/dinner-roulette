@@ -62,6 +62,34 @@ func main() {
 			c.JSON(404, "not found")
 		}
 	})
+	protectedApiRouter.PUT("/meal", func(c *gin.Context) {
+		var meal model.Meal
+		err := c.MustBindWith(&meal, binding.JSON)
+		if err != nil {
+			fmt.Println("Could not parse meal", err)
+			c.JSON(400, err.Error())
+			return
+		}
+		if meal.ID < 1 {
+			fmt.Println("Invalid meal ID:", meal.ID)
+			c.JSON(400, "invalid meal ID")
+			return
+		}
+		if len(meal.Name) < 1 {
+			fmt.Println("Invalid meal name:", meal.Name)
+			c.JSON(400, "meal name can't be empty")
+			return
+		}
+
+		err = mealDao.Update(meal)
+		if err != nil {
+			fmt.Println("Error when updating meal:", err)
+			c.JSON(500, "error when updating meal: " + err.Error())
+			return
+		}
+
+		c.JSON(200, "updated")
+	})
 
 	router.Run(":8080")
 }
