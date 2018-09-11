@@ -10,38 +10,35 @@ import (
 
 const headerAuthorization = "Authorization"
 
-type MyClaims struct {
-	User string `json:"user"`
-	jwt.StandardClaims
-}
-
 // None header: eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0
 
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader(headerAuthorization)
 		if len(authHeader) < 1 {
-			abortRequest(c, fmt.Errorf("auth header missing"))
+			logging.Error.Println("Error:", fmt.Errorf("auth header missing"))
+			abortRequest(c)
 			return
 		}
 
 		token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, hmacSecret())
 		if err != nil {
-			abortRequest(c, err)
-			return
-		}
-
-		err = token.Claims.Valid()
-		if err != nil {
-			abortRequest(c, err)
+			logging.Error.Println("Error:", err)
+			abortRequest(c)
 			return
 		}
 
 		if claims, ok := token.Claims.(*jwt.StandardClaims); ok && token.Valid {
-			c.Set("User", claims.Subject)
+			c.Set("user", claims.Subject)
+			if claims.ExpiresAt == 0 {
+				logging.Error.Println("Error:", fmt.Errorf("ExpiresAt is 0, which usually means it hasn't been set in the JWT"))
+				abortRequest(c)
+				return
+			}
 			c.Next()
 		} else {
-			abortRequest(c, fmt.Errorf("invalid claims or token. Claims OK: %v. Token valid: %v", ok, token.Valid))
+			logging.Error.Println("Error:", fmt.Errorf("invalid claims or token. Claims OK: %v. Token valid: %v", ok, token.Valid))
+			abortRequest(c)
 		}
 	}
 }
@@ -61,8 +58,7 @@ func hmacSecret() jwt.Keyfunc {
 	}
 }
 
-func abortRequest(context *gin.Context, err error) {
+func abortRequest(context *gin.Context) {
 	context.JSON(401, "unauthorized")
-	logging.Info.Println("Error while parsing token: ", err)
 	context.Abort()
 }

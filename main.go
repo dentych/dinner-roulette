@@ -21,6 +21,7 @@ var (
 
 func main() {
 	logging.Init()
+	database.Init()
 
 	router := gin.Default()
 
@@ -33,10 +34,11 @@ func main() {
 
 	protectedApiRouter := router.Group("/api", middleware.AuthRequired())
 	protectedApiRouter.GET("/john", func(c *gin.Context) {
-		user, _ := c.Get("User")
-		c.JSON(200, "Authenticated as: "+user.(string))
+		user := c.GetString("user")
+		c.JSON(200, fmt.Sprintf("Authenticated as: %s", user))
 	})
 	protectedApiRouter.PUT("/meal", func(c *gin.Context) {
+		user := c.GetString("user")
 		var meal model.Meal
 		err := c.MustBindWith(&meal, binding.JSON)
 		if err != nil {
@@ -52,7 +54,7 @@ func main() {
 			return
 		}
 
-		err = mealDao.Update(meal)
+		err = mealDao.Update(user, meal)
 		if err != nil {
 			logging.Error.Printf("Error when updating meal: %s", err)
 			c.JSON(500, "error when updating meal: "+err.Error())
@@ -75,7 +77,7 @@ func main() {
 			return
 		}
 
-		mealDao.Insert(&meal)
+		mealDao.Insert(c.GetString("user"), &meal)
 
 		c.JSON(201, "created")
 	})
@@ -88,7 +90,7 @@ func main() {
 			return
 		}
 
-		meal := mealDao.GetById(id)
+		meal := mealDao.GetById(c.GetString("user"), id)
 
 		if meal != nil {
 			c.JSON(200, *meal)
@@ -104,7 +106,7 @@ func main() {
 			return
 		}
 
-		mealDeleted, err := mealDao.Delete(id)
+		mealDeleted, err := mealDao.Delete(c.GetString("user"), id)
 		if err != nil {
 			logging.Error.Printf("Error deleting meal: %s", err)
 			c.JSON(500, "error while deleting meal")
