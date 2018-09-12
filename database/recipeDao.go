@@ -6,16 +6,16 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type MealDao struct {
+type RecipeDao struct {
 }
 
-func (dao *MealDao) Insert(username string, m *model.Meal) int {
+func (dao *RecipeDao) Insert(username string, m *model.Recipe) int {
 	db, err := GetConnection()
 	if err != nil {
 		return -1
 	}
 
-	sql := `INSERT INTO public.meal (name, url, userid)
+	sql := `INSERT INTO public.recipe (name, url, userid)
 VALUES ($1, $2, (SELECT id FROM public.user WHERE username=$3))`
 	result := db.MustExec(sql, m.Name, m.Url, username)
 	rows, err := result.RowsAffected()
@@ -26,52 +26,52 @@ VALUES ($1, $2, (SELECT id FROM public.user WHERE username=$3))`
 	return int(rows)
 }
 
-func (dao *MealDao) GetAll(username string) []model.Meal {
+func (dao *RecipeDao) GetAll(username string) []model.Recipe {
 	db, err := GetConnection()
 	if err != nil {
 		logging.Error.Printf("Could not connect to database: %s", err)
-		return make([]model.Meal, 0)
+		return make([]model.Recipe, 0)
 	}
 
-	var meals []model.Meal
-	sql := "SELECT id, name, url FROM meal WHERE userid = (SELECT id FROM public.user WHERE username = $1)"
-	err = db.Select(&meals, sql, username)
+	var recipes []model.Recipe
+	sql := "SELECT id, name, url FROM recipe WHERE userid = (SELECT id FROM public.user WHERE username = $1)"
+	err = db.Select(&recipes, sql, username)
 
 	if err != nil {
 		logging.Error.Println(err)
-		return make([]model.Meal, 0)
+		return make([]model.Recipe, 0)
 	}
 
-	return meals
+	return recipes
 }
 
-func (dao *MealDao) GetById(username string, id int64) *model.Meal {
+func (dao *RecipeDao) GetById(username string, id int64) *model.Recipe {
 	db, err := GetConnection()
 	if err != nil {
 		logging.Error.Println(err)
 		return nil
 	}
 
-	var meal model.Meal
-	sql := "SELECT id, name, url FROM meal WHERE id = $1 AND userid = (SELECT id FROM public.user WHERE username = $2)"
-	err = db.Get(&meal, sql, id, username)
+	var recipe model.Recipe
+	sql := "SELECT id, name, url FROM recipe WHERE id = $1 AND userid = (SELECT id FROM public.user WHERE username = $2)"
+	err = db.Get(&recipe, sql, id, username)
 	if err != nil {
 		logging.Error.Println(err)
 		return nil
 	}
 
-	return &meal
+	return &recipe
 }
 
-func (dao *MealDao) Update(username string, meal model.Meal) error {
+func (dao *RecipeDao) Update(username string, recipe model.Recipe) error {
 	db, err := GetConnection()
 	if err != nil {
 		logging.Error.Println(err)
 		return err
 	}
 
-	sql := "UPDATE meal SET name = $1, url = $2 WHERE id = $3"
-	_, err = db.Exec(sql, meal.Name, meal.Url, meal.ID)
+	sql := "UPDATE recipe SET name = $1, url = $2 WHERE id = $3"
+	_, err = db.Exec(sql, recipe.Name, recipe.Url, recipe.ID)
 	if err != nil {
 		logging.Error.Println(err)
 		return err
@@ -80,14 +80,14 @@ func (dao *MealDao) Update(username string, meal model.Meal) error {
 	return nil
 }
 
-func (dao *MealDao) Delete(username string, id int64) (bool, error) {
+func (dao *RecipeDao) Delete(username string, id int64) (bool, error) {
 	db, err := GetConnection()
 	if err != nil {
 		logging.Error.Println(err)
 		return false, err
 	}
 
-	sql := "DELETE FROM meal WHERE id = $1 AND userid = (SELECT id FROM public.user WHERE username = $2)"
+	sql := "DELETE FROM recipe WHERE id = $1 AND userid = (SELECT id FROM public.user WHERE username = $2)"
 	result, err := db.Exec(sql, id, username)
 	if err != nil {
 		logging.Error.Println(err)

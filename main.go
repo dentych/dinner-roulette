@@ -25,7 +25,7 @@ func main() {
 
 	router := gin.Default()
 
-	mealDao := database.MealDao{}
+	recipeDao := database.RecipeDao{}
 
 	unprotectedApiRouter := router.Group("/api")
 	unprotectedApiRouter.GET("/", func(context *gin.Context) {
@@ -37,51 +37,51 @@ func main() {
 		user := c.GetString("user")
 		c.JSON(200, fmt.Sprintf("Authenticated as: %s", user))
 	})
-	protectedApiRouter.PUT("/meal", func(c *gin.Context) {
+	protectedApiRouter.PUT("/recipe", func(c *gin.Context) {
 		user := c.GetString("user")
-		var meal model.Meal
-		err := c.MustBindWith(&meal, binding.JSON)
+		var recipe model.Recipe
+		err := c.MustBindWith(&recipe, binding.JSON)
 		if err != nil {
-			logging.Error.Printf("Could not parse meal: %s", err)
+			logging.Error.Printf("Could not parse recipe: %s", err)
 			c.JSON(400, err.Error())
 			return
 		}
 
-		err = validateMeal(meal, true)
+		err = validateRecipe(recipe, true)
 		if err != nil {
-			logging.Info.Printf("Could not validate meal object: %s", err)
-			c.JSON(400, "invalid meal object")
+			logging.Info.Printf("Could not validate recipe object: %s", err)
+			c.JSON(400, "invalid recipe object")
 			return
 		}
 
-		err = mealDao.Update(user, meal)
+		err = recipeDao.Update(user, recipe)
 		if err != nil {
-			logging.Error.Printf("Error when updating meal: %s", err)
-			c.JSON(500, "error when updating meal: "+err.Error())
+			logging.Error.Printf("Error when updating recipe: %s", err)
+			c.JSON(500, "error when updating recipe: "+err.Error())
 			return
 		}
 
 		c.JSON(200, "updated")
 	})
-	protectedApiRouter.POST("/meal", func(c *gin.Context) {
-		var meal model.Meal
-		err := c.MustBindWith(&meal, binding.JSON)
+	protectedApiRouter.POST("/recipe", func(c *gin.Context) {
+		var recipe model.Recipe
+		err := c.MustBindWith(&recipe, binding.JSON)
 		if err != nil {
 			logging.Error.Printf("Error: %s", err)
 			return
 		}
 
-		err = validateMeal(meal, false)
+		err = validateRecipe(recipe, false)
 		if err != nil {
 			c.JSON(400, err.Error())
 			return
 		}
 
-		mealDao.Insert(c.GetString("user"), &meal)
+		recipeDao.Insert(c.GetString("user"), &recipe)
 
 		c.JSON(201, "created")
 	})
-	protectedApiRouter.GET("/meal/:id", func(c *gin.Context) {
+	protectedApiRouter.GET("/recipe/:id", func(c *gin.Context) {
 		idAsString := c.Param("id")
 		id, err := strconv.ParseInt(idAsString, 10, 64)
 		if err != nil {
@@ -90,45 +90,45 @@ func main() {
 			return
 		}
 
-		meal := mealDao.GetById(c.GetString("user"), id)
+		recipe := recipeDao.GetById(c.GetString("user"), id)
 
-		if meal != nil {
-			c.JSON(200, *meal)
+		if recipe != nil {
+			c.JSON(200, *recipe)
 		} else {
 			c.JSON(404, "not found")
 		}
 	})
-	protectedApiRouter.DELETE("/meal/:id", func(c *gin.Context) {
+	protectedApiRouter.DELETE("/recipe/:id", func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 		if err != nil {
 			logging.Error.Printf("Error: %s", err)
-			c.JSON(400, "invalid or missing id missing from URL path (/api/meal/{id})")
+			c.JSON(400, "invalid or missing id missing from URL path (/api/recipe/{id})")
 			return
 		}
 
-		mealDeleted, err := mealDao.Delete(c.GetString("user"), id)
+		recipeDeleted, err := recipeDao.Delete(c.GetString("user"), id)
 		if err != nil {
-			logging.Error.Printf("Error deleting meal: %s", err)
-			c.JSON(500, "error while deleting meal")
+			logging.Error.Printf("Error deleting recipe: %s", err)
+			c.JSON(500, "error while deleting recipe")
 			return
 		}
-		if mealDeleted {
-			c.JSON(200, "meal deleted")
+		if recipeDeleted {
+			c.JSON(200, "recipe deleted")
 		} else {
-			c.JSON(404, "meal not found")
+			c.JSON(404, "recipe not found")
 		}
 	})
 
 	router.Run(":8080")
 }
-func validateMeal(meal model.Meal, checkId bool) error {
+func validateRecipe(recipe model.Recipe, checkId bool) error {
 	if checkId {
-		if meal.ID < 1 {
+		if recipe.ID < 1 {
 			return fmt.Errorf("missing ID")
 		}
 	}
-	if len(meal.Name) < 1 {
-		return fmt.Errorf("missing meal name")
+	if len(recipe.Name) < 1 {
+		return fmt.Errorf("missing recipe name")
 	}
 
 	return nil
