@@ -9,14 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	_ "github.com/lib/pq"
-	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
-)
-
-var (
-	InfoLog *log.Logger
-	ErrorLog *log.Logger
+	"time"
 )
 
 func main() {
@@ -79,7 +75,16 @@ func main() {
 
 		recipeDao.Insert(c.GetString("user"), &recipe)
 
-		c.JSON(201, "created")
+		c.JSON(201, recipe)
+	})
+	protectedApiRouter.GET("/recipe", func(c *gin.Context) {
+		recipes, err := recipeDao.GetAll(c.GetString("user"))
+		if err != nil {
+			c.JSON(500, "error while getting recipes")
+			return
+		}
+
+		c.JSON(200, recipes)
 	})
 	protectedApiRouter.GET("/recipe/:id", func(c *gin.Context) {
 		idAsString := c.Param("id")
@@ -117,6 +122,37 @@ func main() {
 		} else {
 			c.JSON(404, "recipe not found")
 		}
+	})
+
+	protectedApiRouter.POST("/mealplan", func(c *gin.Context) {
+		recipes, err := recipeDao.GetAll(c.GetString("user"))
+		if err != nil {
+			c.JSON(500, "Error getting recipes while generating meal plan")
+			return
+		}
+
+		if len(recipes) < 1 {
+			c.JSON(400, "Can't generate meal plan - there are no recipes for the current user")
+			return
+		}
+
+		var body gin.H
+		err = c.BindJSON(&body)
+		if err != nil {
+			c.JSON(500, "error")
+			logging.Error.Println("Error while reading body of /mealplan", err)
+			return
+		}
+
+		mealplan := make([]model.Recipe, 0, 7)
+
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		for i := 0; i < 7; i++ {
+			index := r.Intn(len(recipes))
+			mealplan = append(mealplan, recipes[index])
+		}
+
+		c.JSON(200, mealplan)
 	})
 
 	router.Run(":8080")

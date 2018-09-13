@@ -16,33 +16,35 @@ func (dao *RecipeDao) Insert(username string, m *model.Recipe) int {
 	}
 
 	sql := `INSERT INTO public.recipe (name, url, userid)
-VALUES ($1, $2, (SELECT id FROM public.user WHERE username=$3))`
-	result := db.MustExec(sql, m.Name, m.Url, username)
-	rows, err := result.RowsAffected()
+VALUES ($1, $2, (SELECT id FROM public.user WHERE username=$3)) RETURNING id`
+	result := db.QueryRowx(sql, m.Name, m.Url, username)
+	var value int
+	err = result.Scan(&value)
 	if err != nil {
 		return -1
 	}
+	m.ID = value
 
-	return int(rows)
+	return 1
 }
 
-func (dao *RecipeDao) GetAll(username string) []model.Recipe {
+func (dao *RecipeDao) GetAll(username string) ([]model.Recipe, error) {
 	db, err := GetConnection()
 	if err != nil {
 		logging.Error.Printf("Could not connect to database: %s", err)
-		return make([]model.Recipe, 0)
+		return nil, err
 	}
 
-	var recipes []model.Recipe
+	var recipes = make([]model.Recipe, 0, 0)
 	sql := "SELECT id, name, url FROM recipe WHERE userid = (SELECT id FROM public.user WHERE username = $1)"
 	err = db.Select(&recipes, sql, username)
 
 	if err != nil {
 		logging.Error.Println(err)
-		return make([]model.Recipe, 0)
+		return nil, err
 	}
 
-	return recipes
+	return recipes, nil
 }
 
 func (dao *RecipeDao) GetById(username string, id int64) *model.Recipe {
