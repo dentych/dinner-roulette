@@ -2,6 +2,8 @@ pipeline {
   agent {
     docker {
       image 'golang'
+      args '-v /root:/work -w /work'
+      label 'docker'
     }
   }
   stages {
