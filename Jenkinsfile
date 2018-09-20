@@ -7,7 +7,7 @@ pipeline {
       steps {
         sh 'pwd'
         sh 'ls'
-        sh 'docker run --rm -it -v $(pwd):/work -w /work golang go build'
+        sh 'docker run --rm -v $(pwd):/work -w /work golang go build'
       }
     }
   }
