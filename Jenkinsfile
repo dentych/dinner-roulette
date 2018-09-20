@@ -8,5 +8,8 @@ pipeline {
         sh 'go build'
       }
     }
+    stage('test') {
+      sh 'ls'
+    }
   }
 }
