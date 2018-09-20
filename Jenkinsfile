@@ -7,7 +7,7 @@ pipeline {
       steps {
         sh 'go build'
         sh 'ls'
-        stash name: 'binary', includes: '**/main'
+        stash name: 'binary', includes: 'dinner-dash'
       }
     }
     stage('test') {
