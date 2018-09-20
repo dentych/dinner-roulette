@@ -7,13 +7,12 @@ pipeline {
       steps {
         sh 'go build'
         sh 'ls'
-        stash name: 'binary', includes: 'dinner-dash'
       }
     }
     stage('test') {
       steps {
-        unstash 'binary'
         sh 'ls'
+        sh 'go test'
       }
     }
   }
