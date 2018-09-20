@@ -6,7 +6,8 @@ pipeline {
     stage('build') {
       steps {
         sh 'go build'
-        stash name: 'binary', includes: 'main'
+        sh 'ls'
+        stash name: 'binary', includes: '**/main'
       }
     }
     stage('test') {
