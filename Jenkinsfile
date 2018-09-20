@@ -1,13 +1,12 @@
 pipeline {
   agent {
-    label 'docker'
+    docker 'golang:alpine'
   }
   stages {
     stage('build') {
       steps {
         sh 'pwd'
         sh 'ls'
-        sh 'docker run --rm -v $(pwd):/work -w /work golang go build'
       }
     }
   }
