@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var ConnectionString = "user=postgres user=postgres dbname=dinner-dash password=" + os.Getenv("PQ_PASSWORD")+" host=35.228.143.86"
+var ConnectionString = " host=localhost user=postgres user=postgres dbname=dinner-dash password=" + os.Getenv("PQ_PASSWORD")
 var db *sqlx.DB
 
 // Init will setup a new database connection. The method will panic
