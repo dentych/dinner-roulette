@@ -19,7 +19,7 @@ func Init() {
 // GetConnection will return a database object, which can be used to perform queries.
 func GetConnection() (*sqlx.DB, error) {
 	if db == nil {
-		logging.Error.Fatal("Database is nil and SHOULD NOT be!")
+		logging.Error.Fatal("Database is nil. You must initialize before getting the connection.")
 	}
 
 	return db, nil
