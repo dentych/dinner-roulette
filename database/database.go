@@ -16,8 +16,8 @@ func Init() {
 	db = sqlx.MustConnect("postgres", ConnectionString)
 }
 
-// GetConnection will return a database object, which can be used to perform queries.
-func GetConnection() (*sqlx.DB, error) {
+// getConnection will return a database object, which can be used to perform queries.
+func getConnection() (*sqlx.DB, error) {
 	if db == nil {
 		logging.Error.Fatal("Database is nil. You must initialize before getting the connection.")
 	}

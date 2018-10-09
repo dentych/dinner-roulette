@@ -6,6 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"os"
+	"strings"
 )
 
 const headerAuthorization = "Authorization"
@@ -15,13 +16,21 @@ const headerAuthorization = "Authorization"
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader(headerAuthorization)
-		if len(authHeader) < 1 {
-			logging.Error.Println("Error:", fmt.Errorf("auth header missing"))
+		if !strings.Contains(authHeader, "Bearer") {
+			logging.Error.Printf("Header is not bearer. Header: %s", authHeader)
 			abortRequest(c)
 			return
 		}
 
-		token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, hmacSecret())
+		splittedHeader := strings.Split(c.GetHeader(headerAuthorization), " ")
+		if len(splittedHeader) < 2 {
+			logging.Error.Printf("auth header incorrectly formatted: %s", authHeader)
+			abortRequest(c)
+			return
+		}
+
+		jwtPart := splittedHeader[1]
+		token, err := jwt.ParseWithClaims(jwtPart, &jwt.StandardClaims{}, hmacSecret())
 		if err != nil {
 			logging.Error.Println("Error:", err)
 			abortRequest(c)

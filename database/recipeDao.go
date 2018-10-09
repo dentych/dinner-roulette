@@ -9,33 +9,31 @@ import (
 type RecipeDao struct {
 }
 
-func (dao *RecipeDao) Insert(username string, m *model.Recipe) int {
-	db, err := GetConnection()
+func (dao *RecipeDao) Insert(username string, m *model.Recipe) error {
+	db, err := getConnection()
 	if err != nil {
-		return -1
+		return err
 	}
 
 	sql := `INSERT INTO public.recipe (name, url, userid)
 VALUES ($1, $2, (SELECT id FROM public.user WHERE username=$3)) RETURNING id`
-	result := db.QueryRowx(sql, m.Name, m.Url, username)
-	var value int
-	err = result.Scan(&value)
+	err = db.Get(&m.ID, sql, m.Name, m.Url, username)
 	if err != nil {
-		return -1
+		logging.Error.Printf("Error: %s", err)
+		return err
 	}
-	m.ID = value
 
-	return 1
+	return nil
 }
 
 func (dao *RecipeDao) GetAll(username string) ([]model.Recipe, error) {
-	db, err := GetConnection()
+	db, err := getConnection()
 	if err != nil {
 		logging.Error.Printf("Could not connect to database: %s", err)
 		return nil, err
 	}
 
-	var recipes = make([]model.Recipe, 0, 0)
+	var recipes = make([]model.Recipe, 0, 10)
 	sql := "SELECT id, name, url FROM recipe WHERE userid = (SELECT id FROM public.user WHERE username = $1)"
 	err = db.Select(&recipes, sql, username)
 
@@ -47,8 +45,8 @@ func (dao *RecipeDao) GetAll(username string) ([]model.Recipe, error) {
 	return recipes, nil
 }
 
-func (dao *RecipeDao) GetById(username string, id int64) *model.Recipe {
-	db, err := GetConnection()
+func (dao *RecipeDao) GetById(username, id string, includeIngredients bool) *model.Recipe {
+	db, err := getConnection()
 	if err != nil {
 		logging.Error.Println(err)
 		return nil
@@ -66,7 +64,7 @@ func (dao *RecipeDao) GetById(username string, id int64) *model.Recipe {
 }
 
 func (dao *RecipeDao) Update(username string, recipe model.Recipe) error {
-	db, err := GetConnection()
+	db, err := getConnection()
 	if err != nil {
 		logging.Error.Println(err)
 		return err
@@ -83,7 +81,7 @@ func (dao *RecipeDao) Update(username string, recipe model.Recipe) error {
 }
 
 func (dao *RecipeDao) Delete(username string, id int64) (bool, error) {
-	db, err := GetConnection()
+	db, err := getConnection()
 	if err != nil {
 		logging.Error.Println(err)
 		return false, err
@@ -104,4 +102,21 @@ func (dao *RecipeDao) Delete(username string, id int64) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+func (dao *RecipeDao) AddIngredient(recipeId string, ingredient model.Ingredient) error {
+	db, err := getConnection()
+	if err != nil {
+		logging.Error.Println(err)
+		return err
+	}
+
+	sql := "INSERT INTO recipe_ingredient (recipeid, ingredientid, amount) VALUES ($1, $2, $3)"
+	_, err = db.Exec(sql, recipeId, ingredient.Id, ingredient.Amount)
+	if err != nil {
+		logging.Error.Printf("Error: %s", err)
+		return err
+	}
+
+	return nil
 }
