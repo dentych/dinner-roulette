@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-success">
         <a class="navbar-brand" href="#">Dinner Dash</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,6 +21,11 @@
 
 <script>
     export default {
-        name: "navbar"
+        name: "navbar",
+        watch: {
+            '$route' () {
+                $(".navbar-collapse").collapse("hide")
+            }
+        }
     }
 </script>
