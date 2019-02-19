@@ -15,7 +15,7 @@
 *.out
 
 ### Go Patch ###
-/vendor/
+vendor/
 
 # IDEA files and dirs
 .idea/
