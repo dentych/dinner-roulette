@@ -6,24 +6,31 @@
                 <p>Here is a list of all recipes.</p>
             </div>
             <div class="col-auto">
-                <button class="btn btn-success">Add new recipe</button>
+                <router-link to="/add-recipe">
+                    <button class="btn btn-success">Add new recipe</button>
+                </router-link>
             </div>
         </div>
-        <div class="row justify-content-center" v-if="!loaded">
+        <div class="row justify-content-center" v-if="recipes == null">
             <div class="spinner-border text-primary" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
+        <div class="row mt-4" v-if="!recipes || recipes.length === 0">
+            <div class="col text-center">
+                No recipes. Add your first recipe now!
+            </div>
+        </div>
         <div class="row mb-4" v-for="i in rowCount" :key="i">
-            <div class="card-deck">
-                <div class="card mx-2" v-for="recipe in itemsInRow(i)" :key="recipe.title">
+            <div class="col-12 mb-4 mb-sm-0 col-sm-3" v-for="recipe in itemsInRow(i)" :key="recipe.title" v-once>
+                <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">{{recipe.title}}</h5>
-                        <p class="card-text">{{recipe.body}}</p>
+                        <h5 class="card-title">{{recipe.name}}</h5>
+                        <p class="card-text">{{recipe.description}}</p>
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between align-items-center">
-                            <button class="btn btn-sm btn-success">More info</button>
+                            <button class="btn btn-sm btn-success" disabled>More info</button>
                             <a class="badge badge-light remove-icon align-middle" href="#">
                                 <i class="fas fa-times"></i>
                             </a>
@@ -35,7 +42,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
     .remove-icon {
         font-size: 15px;
         float: right;
@@ -43,7 +50,7 @@
 </style>
 
 <script>
-    import axios from "axios";
+    import backendService from "../service/BackendService"
 
     export default {
         data: function () {
@@ -64,18 +71,8 @@
                 return this.recipes.slice((index - 1) * this.itemsPerRow, index * this.itemsPerRow)
             }
         },
-        created: function () {
-            // setTimeout(() => {
-            axios
-                .get("https://jsonplaceholder.typicode.com/posts")
-                .then(response => {
-                    this.loaded = true;
-                    if (response.status >= 200 && response.status < 300) {
-                        this.recipes = response.data;
-                    }
-                })
-            // }, 1000)
-
+        mounted: function () {
+            this.recipes = backendService.getAllRecipes()
         }
     }
 </script>
