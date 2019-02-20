@@ -47,6 +47,9 @@
         font-size: 15px;
         float: right;
     }
+    .card-text {
+        white-space: pre-wrap;
+    }
 </style>
 
 <script>
