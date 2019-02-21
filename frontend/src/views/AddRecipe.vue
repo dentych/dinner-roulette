@@ -25,7 +25,7 @@
 </template>
 
 <script>
-    import backendService from "../service/BackendService"
+    import backendService from "../services/BackendService"
 
     export default {
         name: "AddRecipe",

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import AddRecipe from "./views/AddRecipe";
+import ShowRecipe from "./views/ShowRecipe";
 
 Vue.use(Router);
 
@@ -22,6 +23,11 @@ export default new Router({
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: () => import(/* webpackChunkName: "about" */ './views/Recipes.vue')
+        },
+        {
+            path: "/recipes/:id",
+            name: "show-recipe",
+            component: ShowRecipe
         },
         {
             path: "/add-recipe",

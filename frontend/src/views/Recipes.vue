@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="row mb-4" v-for="i in rowCount" :key="i">
-            <div class="col-12 mb-4 mb-sm-0 col-sm-3" v-for="recipe in itemsInRow(i)" :key="recipe.title" v-once>
+            <div class="col-12 mb-4 mb-sm-0 col-sm-3" v-for="(recipe, index) in itemsInRow(i)" :key="recipe.uid">
                 <div class="card h-100">
                     <div class="card-body">
                         <h5 class="card-title">{{recipe.name}}</h5>
@@ -30,8 +30,10 @@
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between align-items-center">
-                            <button class="btn btn-sm btn-success" disabled>More info</button>
-                            <a class="badge badge-light remove-icon align-middle" href="#">
+                            <router-link :to="{name: 'show-recipe', params: { id: index }}">
+                                <button class="btn btn-sm btn-success">More info</button>
+                            </router-link>
+                            <a class="badge badge-light remove-icon align-middle" @click="deleteRecipe(index)">
                                 <i class="fas fa-times"></i>
                             </a>
                         </div>
@@ -47,13 +49,14 @@
         font-size: 15px;
         float: right;
     }
+
     .card-text {
         white-space: pre-wrap;
     }
 </style>
 
 <script>
-    import backendService from "../service/BackendService"
+    import backendService from "../services/BackendService"
 
     export default {
         data: function () {
@@ -72,6 +75,12 @@
         methods: {
             itemsInRow: function (index) {
                 return this.recipes.slice((index - 1) * this.itemsPerRow, index * this.itemsPerRow)
+            },
+            deleteRecipe(index) {
+                let confirmed = confirm("Delete recipe '" + this.recipes[index].name + "'?");
+                if (confirmed) {
+                    backendService.deleteRecipe(index)
+                }
             }
         },
         mounted: function () {
