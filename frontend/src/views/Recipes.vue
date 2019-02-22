@@ -26,7 +26,7 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <h5 class="card-title">{{recipe.name}}</h5>
-                        <p class="card-text">{{recipe.description}}</p>
+                        <p class="card-text">{{shortDesc(recipe.description)}}</p>
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between align-items-center">
@@ -81,6 +81,12 @@
                 if (confirmed) {
                     backendService.deleteRecipe(index)
                 }
+            },
+            shortDesc(description) {
+                if (description.length < 200) {
+                    return description
+                }
+                return description.substring(0, 197) + "..."
             }
         },
         mounted: function () {
