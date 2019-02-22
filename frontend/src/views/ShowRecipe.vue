@@ -5,6 +5,8 @@
                 <div v-if="recipe">
                     <h1>{{recipe.name}}</h1>
                     <p class="recipe-text">{{recipe.description}}</p>
+                    <hr>
+                    <p>Recipe link: <a :href="recipe.url" target="_blank">{{recipe.url}}</a></p>
                 </div>
             </div>
             <div class="col col-sm-4">

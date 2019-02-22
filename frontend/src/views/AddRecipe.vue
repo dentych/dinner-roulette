@@ -10,7 +10,7 @@
                         <input type="text" v-model="name" class="form-control" id="name" placeholder="Enter a name for your recipe" autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label for="url">Recipe URL</label>
+                        <label for="url">Recipe link</label>
                         <input type="url" v-model="url" class="form-control" id="url" placeholder="http://recipeplace.com/somerecipe">
                     </div>
                     <div class="form-group">
