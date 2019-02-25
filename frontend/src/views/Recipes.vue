@@ -83,10 +83,10 @@
                 }
             },
             shortDesc(description) {
-                if (description.length < 200) {
+                if (description.length < 100) {
                     return description
                 }
-                return description.substring(0, 197) + "..."
+                return description.substr(0, description.lastIndexOf(" ", 100)) + "..."
             }
         },
         mounted: function () {

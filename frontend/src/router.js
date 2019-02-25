@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import AddRecipe from "./views/AddRecipe";
 import ShowRecipe from "./views/ShowRecipe";
+import EditRecipe from "./views/EditRecipe";
 
 Vue.use(Router);
 
@@ -33,6 +34,11 @@ export default new Router({
             path: "/add-recipe",
             name: "add recipe",
             component: AddRecipe
+        },
+        {
+            path: "/edit-recipe/:id",
+            name: "edit recipe",
+            component: EditRecipe
         }
     ]
 })

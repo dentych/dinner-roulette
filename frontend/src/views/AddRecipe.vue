@@ -13,10 +13,7 @@
                         <label for="url">Recipe link</label>
                         <input type="url" v-model="url" class="form-control" id="url" placeholder="http://recipeplace.com/somerecipe">
                     </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea v-model="description" @keyup="autoGrow" contenteditable="true" rows="3" id="description" class="form-control description-area"></textarea>
-                    </div>
+                    <growing-text-area @update="updateDescription"></growing-text-area>
                     <button type="submit" class="btn btn-success float-right">Submit</button>
                 </form>
             </div>
@@ -26,9 +23,11 @@
 
 <script>
     import backendService from "../services/BackendService"
+    import GrowingTextArea from "../components/GrowingTextArea";
 
     export default {
         name: "AddRecipe",
+        components: {GrowingTextArea},
         data: function () {
             return {
                 name: null,
@@ -41,19 +40,9 @@
                 backendService.saveRecipe({name: this.name, url: this.url, description: this.description})
                 this.$router.push("/recipes")
             },
-            autoGrow(e) {
-                let textField = e.target;
-                textField.style.height = "auto";
-                if (textField.scrollHeight > textField.clientHeight) {
-                    textField.style.height = textField.scrollHeight + "px"
-                }
+            updateDescription(data) {
+                this.description = data
             }
         }
     }
 </script>
-
-<style scoped>
-    .description-area {
-        overflow: hidden
-    }
-</style>

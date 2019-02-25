@@ -35,6 +35,7 @@
         },
         methods: {
             editRecipe() {
+                this.$router.push("/edit-recipe/" + this.id)
             },
             deleteRecipe() {
                 let confirmed = confirm("Are you sure you want to delete the recipe with ID: " + this.id + "?")
