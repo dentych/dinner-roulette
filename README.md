@@ -1,4 +1,4 @@
-# dinner-dash
+# Dinner-dash
 
 Automatic creation of food plans, based on saved recipes.
 
@@ -10,18 +10,30 @@ Dinner dash is the fix to that. The purpose of dinner dash is to provide a platf
 
 ## Technology stack
 
-The backend will be built using the Go programming langauge. The database used will be PostgreSQL.
-The backend will be a set of APIs that can be called from the frontend, in order to perform various actions in the system.
+### Backend technologies
 
-The frontend will be built using either Angular og Vue.js. That has yet to be decided. It will connect to the backend API, which means the frontend and backend will be loosely coupled and only tied together by HTTP calls to the API.
-Nginx will most likely be used to serve the static HTML/CSS/JS files.
+* **Programming language:** [Go](http://golang.org).
+* **Architecture:** Monolith exposing REST APIs to be used by the frontend.
+* **Authentication:** JWT based approach (maybe auth0). [JWT introduction](https://jwt.io/introduction/)
+* **Database:** PostgreSQL.
+
+### Frontend technologies
+
+* **Library:** [VueJS](https://vuejs.org/).
+* **Typescript/JavaScript**: Currently plain JavaScript.
+
+The frontend will be served from the Go backend. This eliminates the need for a separate web server just for serving static files. This also creates the possibility to create one single Docker image, which contains the entire application, which makes deployment much easier.
 
 ## Contributing
 
-Contributing to this project can be done by picking up an issue from the backlog and file a PR for the repository.
-
-If you wish to contribute, please comment on the issue you wish to develop. This has to be done in order to clarify what the issue entails, what exactly the scope of the issue is and possibly proposals to ways of solving the issue.
+Contributions are more than welcome! Contact me if you find the project interesting, and we can probably figure out a way to include you =)
 
 ## Where can I use Dinner Dash?
 
-Currently nowhere. The application is far from finished, and still quite far from a version 1. Whenever a version 1 is available, a link will be provided in the top of this page.
+The application is in its very early stages. Latest development builds will be put at [dinner-dash.tychsen.me](http://dinner-dash.tychsen.me).
+
+## Name of the application
+
+Dinner-dash is the name of a game. Thus, before this application can go live for real, it will need a new name.
+
+At this point, there are no proposed names, but will appear in this section when received.
