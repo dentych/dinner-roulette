@@ -30,10 +30,10 @@
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between align-items-center">
-                            <router-link :to="{name: 'show-recipe', params: { id: index }}">
+                            <router-link :to="{name: 'show-recipe', params: { id: calculateId(i, index) }}">
                                 <button class="btn btn-sm btn-success">More info</button>
                             </router-link>
-                            <a class="badge badge-light remove-icon align-middle" @click="deleteRecipe(index)">
+                            <a class="badge badge-light remove-icon align-middle" @click="deleteRecipe(calculateId(i, index))">
                                 <i class="fas fa-times"></i>
                             </a>
                         </div>
@@ -73,7 +73,7 @@
             }
         },
         methods: {
-            itemsInRow: function (index) {
+            itemsInRow(index) {
                 return this.recipes.slice((index - 1) * this.itemsPerRow, index * this.itemsPerRow)
             },
             deleteRecipe(index) {
@@ -87,9 +87,12 @@
                     return description
                 }
                 return description.substr(0, description.lastIndexOf(" ", 100)) + "..."
+            },
+            calculateId(row, index) {
+                return (row - 1) * 4 + index;
             }
         },
-        mounted: function () {
+        mounted() {
             this.recipes = backendService.getAllRecipes()
         }
     }
