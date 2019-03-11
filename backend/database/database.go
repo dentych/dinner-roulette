@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var ConnectionString = " host=localhost user=postgres user=postgres dbname=dinner-dash password=" + os.Getenv("PQ_PASSWORD") +
+var ConnectionString = " host=localhost user=postgres dbname=dinner-dash password=" + os.Getenv("PG_PASSWORD") +
 	"  sslmode=disable"
 var db *sqlx.DB
 
@@ -17,10 +17,10 @@ func Init() {
 }
 
 // GetConnection will return a database object, which can be used to perform queries.
-func GetConnection() (*sqlx.DB, error) {
+func GetConnection() *sqlx.DB {
 	if db == nil {
 		logging.Error.Fatal("Database is nil. You must initialize before getting the connection.")
 	}
 
-	return db, nil
+	return db
 }

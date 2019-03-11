@@ -1,3 +1,4 @@
+import axios from "axios";
 
 var recipes = [];
 
@@ -33,6 +34,11 @@ class BackendService {
     deleteRecipe(id) {
         recipes.splice(id, 1);
         updateLocalStorage()
+    }
+
+    registerUser(email, pass1) {
+        let user = {email: email, password: pass1};
+        return axios.post("http://localhost:8081/api/register", user)
     }
 }
 

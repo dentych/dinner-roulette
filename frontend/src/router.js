@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import AddRecipe from "./views/AddRecipe";
 import ShowRecipe from "./views/ShowRecipe";
 import EditRecipe from "./views/EditRecipe";
+import Register from "./views/Register";
 
 Vue.use(Router);
 
@@ -39,6 +40,11 @@ export default new Router({
             path: "/edit-recipe/:id",
             name: "edit recipe",
             component: EditRecipe
+        },
+        {
+            path: "/register",
+            name: "register user",
+            component: Register
         }
     ]
 })

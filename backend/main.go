@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/dentych/dinner-dash/controllers"
 	"github.com/dentych/dinner-dash/database"
 	"github.com/dentych/dinner-dash/logging"
 	"github.com/dentych/dinner-dash/middleware"
-	"github.com/dentych/dinner-dash/model"
+	"github.com/dentych/dinner-dash/models"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	_ "github.com/lib/pq"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -20,13 +22,19 @@ func main() {
 	database.Init()
 
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	recipeDao := database.RecipeDao{}
+	userDao := database.UserDao{}
+
+	authController := controllers.NewAuthController(userDao)
 
 	unprotectedApiRouter := router.Group("/api")
 	unprotectedApiRouter.GET("/", func(context *gin.Context) {
 		context.JSON(http.StatusOK, "OK")
 	})
+	unprotectedApiRouter.POST("/login", authController.Login)
+	unprotectedApiRouter.POST("/register", authController.Register)
 
 	protectedApiRouter := router.Group("/api", middleware.AuthRequired())
 	protectedApiRouter.GET("/john", func(c *gin.Context) {
@@ -35,7 +43,7 @@ func main() {
 	})
 	protectedApiRouter.PUT("/recipe", func(c *gin.Context) {
 		user := c.GetString("user")
-		var recipe model.Recipe
+		var recipe models.Recipe
 		err := c.MustBindWith(&recipe, binding.JSON)
 		if err != nil {
 			logging.Error.Printf("Could not parse recipe: %s", err)
@@ -60,7 +68,7 @@ func main() {
 		c.JSON(200, "updated")
 	})
 	protectedApiRouter.POST("/recipe", func(c *gin.Context) {
-		var recipe model.Recipe
+		var recipe models.Recipe
 		err := c.MustBindWith(&recipe, binding.JSON)
 		if err != nil {
 			logging.Error.Printf("Error: %s", err)
@@ -144,7 +152,7 @@ func main() {
 			return
 		}
 
-		mealplan := make([]model.Recipe, 0, 7)
+		mealplan := make([]models.Recipe, 0, 7)
 
 		r := rand.New(rand.NewSource(time.Now().UnixNano()))
 		for i := 0; i < 7; i++ {
@@ -155,9 +163,12 @@ func main() {
 		c.JSON(200, mealplan)
 	})
 
-	router.Run(":8080")
+	err := router.Run(":8081")
+	if err != nil {
+		log.Fatalf("Such error\n")
+	}
 }
-func validateRecipe(recipe model.Recipe, checkId bool) error {
+func validateRecipe(recipe models.Recipe, checkId bool) error {
 	if checkId {
 		if recipe.ID < 1 {
 			return fmt.Errorf("missing ID")

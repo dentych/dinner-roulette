@@ -1,13 +1,12 @@
 CREATE TABLE public.user (
-  id SERIAL NOT NULL CONSTRAINT user_pkey PRIMARY KEY,
-  username VARCHAR(25) NOT NULL,
-  email TEXT NOT NULL,
-  hash TEXT NOT NULL,
+  id SERIAL NOT NULL PRIMARY KEY,
+  email VARCHAR(100) NOT NULL,
+  passwordHash TEXT NOT NULL,
   salt TEXT NOT NULL
 );
 
 CREATE TABLE public.recipe (
-  id SERIAL NOT NULL CONSTRAINT recipe_pkey PRIMARY KEY,
+  id SERIAL NOT NULL PRIMARY KEY,
   name TEXT NOT NULL,
   url TEXT,
   userid INTEGER NOT NULL
@@ -16,3 +15,9 @@ CREATE TABLE public.recipe (
       ON DELETE CASCADE
 );
 
+CREATE TABLE public.sessions (
+  id SERIAL NOT NULL PRIMARY KEY,
+  userid INTEGER NOT NULL,
+  sessionId VARCHAR(64) NOT NULL,
+  validTo TIMESTAMP NOT NULL
+)

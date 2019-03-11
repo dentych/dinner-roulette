@@ -9,23 +9,23 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "vue": "^2.5.22",
+    "vue": "^2.6.8",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.4.0",
-    "@vue/cli-plugin-eslint": "^3.4.0",
-    "@vue/cli-service": "^3.4.0",
+    "@vue/cli-plugin-babel": "^3.5.0",
+    "@vue/cli-plugin-eslint": "^3.5.0",
+    "@vue/cli-service": "^3.5.0",
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.8.0",
+    "eslint": "^5.15.1",
     "eslint-plugin-vue": "^5.0.0",
-    "vue-template-compiler": "^2.5.21"
+    "vue-template-compiler": "^2.6.8"
   },
   "eslintConfig": {
     "root": true,
     "env": {
       "node": true,
-      "jquery":  true
+      "jquery": true
     },
     "extends": [
       "plugin:vue/essential",
