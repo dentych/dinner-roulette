@@ -1,18 +1,21 @@
 package database
 
 import (
+	"fmt"
+	"github.com/dentych/dinner-dash/config"
 	"github.com/dentych/dinner-dash/logging"
 	"github.com/jmoiron/sqlx"
-	"os"
 )
 
-var ConnectionString = " host=localhost user=postgres dbname=dinner-dash password=" + os.Getenv("PG_PASSWORD") +
-	"  sslmode=disable"
 var db *sqlx.DB
+
+var ConnectionString string
 
 // Init will setup a new database connection. The method will panic
 // if a database connection can not be established.
-func Init() {
+func Init(config config.DatabaseConfig) {
+	format := "host=%s user=%s password=%s dbname=%s sslmode=disable"
+	ConnectionString = fmt.Sprintf(format, config.Hostname, config.Username, config.Password, config.Database)
 	db = sqlx.MustConnect("postgres", ConnectionString)
 }
 
@@ -23,4 +26,12 @@ func GetConnection() *sqlx.DB {
 	}
 
 	return db
+}
+
+func GetConnectionString() string {
+	if ConnectionString == "" {
+		logging.Error.Fatal("You must initialize the database before calling GetConnectionString")
+	}
+
+	return ConnectionString
 }

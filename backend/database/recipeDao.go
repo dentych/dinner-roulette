@@ -29,7 +29,7 @@ func (dao *RecipeDao) GetAll(username string) ([]models.Recipe, error) {
 	db := GetConnection()
 
 	var recipes = make([]models.Recipe, 0, 0)
-	sql := "SELECT id, name, url FROM recipe WHERE userid = (SELECT id FROM public.user WHERE username = $1)"
+	sql := "SELECT id, name, url FROM recipe WHERE userId = (SELECT id FROM public.user WHERE username = $1)"
 	err := db.Select(&recipes, sql, username)
 
 	if err != nil {
@@ -44,7 +44,7 @@ func (dao *RecipeDao) GetById(username string, id int64) *models.Recipe {
 	db := GetConnection()
 
 	var recipe models.Recipe
-	sql := "SELECT id, name, url FROM recipe WHERE id = $1 AND userid = (SELECT id FROM public.user WHERE username = $2)"
+	sql := "SELECT id, name, url FROM recipe WHERE id = $1 AND userId = (SELECT id FROM public.user WHERE username = $2)"
 	err := db.Get(&recipe, sql, id, username)
 	if err != nil {
 		logging.Error.Println(err)

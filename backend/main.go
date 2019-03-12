@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/dentych/dinner-dash/config"
 	"github.com/dentych/dinner-dash/controllers"
 	"github.com/dentych/dinner-dash/database"
 	"github.com/dentych/dinner-dash/logging"
@@ -18,8 +19,11 @@ import (
 )
 
 func main() {
+	config := config.ConfigFromEnv()
+
 	logging.Init()
-	database.Init()
+	database.Init(config.DbConfig)
+	database.RunMigrations(config.DbConfig)
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -27,7 +31,7 @@ func main() {
 	recipeDao := database.RecipeDao{}
 	userDao := database.UserDao{}
 
-	authController := controllers.NewAuthController(userDao)
+	authController := controllers.NewAuthController(userDao, config.CookieHost)
 
 	unprotectedApiRouter := router.Group("/api")
 	unprotectedApiRouter.GET("/", func(context *gin.Context) {
@@ -35,6 +39,7 @@ func main() {
 	})
 	unprotectedApiRouter.POST("/login", authController.Login)
 	unprotectedApiRouter.POST("/register", authController.Register)
+	unprotectedApiRouter.POST("/token", authController.Token)
 
 	protectedApiRouter := router.Group("/api", middleware.AuthRequired())
 	protectedApiRouter.GET("/john", func(c *gin.Context) {
