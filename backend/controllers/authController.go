@@ -7,7 +7,6 @@ import (
 	"github.com/dentych/dinner-dash/security"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
-	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -63,14 +62,13 @@ func (ctl *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 
-	salt := getSalt()
 	hash, err := hashFromPassword(u.Email)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "an error occurred.", "error_code": "A2"})
 		return
 	}
 
-	userToSave := models.User{Email: u.Email, PasswordHash: hash, Salt: salt}
+	userToSave := models.User{Email: u.Email, PasswordHash: hash}
 
 	userId, err := ctl.userDao.Insert(userToSave)
 	if err != nil {
@@ -95,10 +93,6 @@ func hashFromPassword(pass string) (string, error) {
 	return string(hash), err
 }
 
-func getSalt() int {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	return r.Intn(100000000)
-}
 
 func isEmptyOrWhitespace(str string) bool {
 	return len(strings.TrimSpace(str)) == 0
