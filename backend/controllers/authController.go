@@ -149,7 +149,19 @@ func (ctl *AuthController) Token(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "Such token, much jwt")
+	user, err := ctl.userDao.GetUserById(userId)
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	token, err := security.CreateJwtAccessToken(userId, user.Email)
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"access_token": token})
 }
 
 func setUserSessionCookie(ctx *gin.Context, userId int, session string, host string) {

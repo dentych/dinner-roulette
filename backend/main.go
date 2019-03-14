@@ -19,7 +19,7 @@ import (
 )
 
 func main() {
-	config := config.ConfigFromEnv()
+	config := config.FromEnv()
 
 	logging.Init()
 	database.Init(config.DbConfig)
@@ -42,9 +42,9 @@ func main() {
 	unprotectedApiRouter.POST("/token", authController.Token)
 
 	protectedApiRouter := router.Group("/api", middleware.AuthRequired())
-	protectedApiRouter.GET("/john", func(c *gin.Context) {
-		user := c.GetString("user")
-		c.JSON(200, fmt.Sprintf("Authenticated as: %s", user))
+	protectedApiRouter.GET("/test", func(c *gin.Context) {
+		userid := c.GetInt("userid")
+		c.JSON(200, fmt.Sprintf("Authenticated as: %v", userid))
 	})
 	protectedApiRouter.PUT("/recipe", func(c *gin.Context) {
 		user := c.GetString("user")

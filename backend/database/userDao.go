@@ -80,3 +80,14 @@ func (dao *UserDao) DeleteSessionsByUserId(userId int) error {
 
 	return err
 }
+
+func (dao *UserDao) GetUserById(userId int) (models.User, error) {
+	db := GetConnection()
+
+	q := "SELECT id, email, passwordHash FROM public.user WHERE id = $1"
+
+	var user models.User
+	err := db.Get(&user, q, userId)
+
+	return user, err
+}
