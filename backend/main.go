@@ -26,7 +26,11 @@ func main() {
 	database.RunMigrations(config.DbConfig)
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowCredentials = true
+	corsConfig.AllowOrigins = []string{"http://localhost:8080", "http://dinner-dash.tychsen.me"}
+	//corsConfig.AllowAllOrigins = true
+	router.Use(cors.New(corsConfig))
 
 	recipeDao := database.RecipeDao{}
 	userDao := database.UserDao{}
@@ -40,6 +44,7 @@ func main() {
 	unprotectedApiRouter.POST("/login", authController.Login)
 	unprotectedApiRouter.POST("/register", authController.Register)
 	unprotectedApiRouter.POST("/token", authController.Token)
+	unprotectedApiRouter.POST("/logout", authController.Logout)
 
 	protectedApiRouter := router.Group("/api", middleware.AuthRequired())
 	protectedApiRouter.GET("/test", func(c *gin.Context) {

@@ -56,7 +56,7 @@
 </style>
 
 <script>
-    import backendService from "../services/BackendService"
+    import {backendService} from "../services/BackendService"
 
     export default {
         data: function () {

@@ -26,7 +26,7 @@
 </template>
 
 <script>
-    import backendService from "../services/BackendService"
+    import {backendService} from "../services/BackendService"
     import GrowingTextArea from "../components/GrowingTextArea";
 
     export default {

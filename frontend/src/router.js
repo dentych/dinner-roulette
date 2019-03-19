@@ -5,6 +5,7 @@ import AddRecipe from "./views/AddRecipe";
 import ShowRecipe from "./views/ShowRecipe";
 import EditRecipe from "./views/EditRecipe";
 import Register from "./views/Register";
+import Login from "./views/Login";
 
 Vue.use(Router);
 
@@ -45,6 +46,11 @@ export default new Router({
             path: "/register",
             name: "register user",
             component: Register
+        },
+        {
+            path: "/login",
+            name: "login",
+            component: Login
         }
     ]
 })

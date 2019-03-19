@@ -42,4 +42,6 @@ class BackendService {
     }
 }
 
-export default new BackendService()
+const backendService = new BackendService();
+
+export {backendService}

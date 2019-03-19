@@ -15,15 +15,31 @@
                     <a class="nav-link">Recipes</a>
                 </router-link>
             </ul>
+            <button class="btn btn-outline-light" @click="logOut" v-if="authService.token">Log out</button>
+            <router-link to="/login" v-if="!authService.token">
+                <button class="btn btn-outline-light">Log in</button>
+            </router-link>
         </div>
     </nav>
 </template>
 
 <script>
+    import {authService} from "../services/AuthService";
+
     export default {
         name: "navbar",
+        data() {
+            return {
+                authService: authService
+            }
+        },
+        methods: {
+            logOut() {
+                authService.logout()
+            }
+        },
         watch: {
-            '$route' () {
+            '$route'() {
                 $(".navbar-collapse").collapse("hide")
             }
         }

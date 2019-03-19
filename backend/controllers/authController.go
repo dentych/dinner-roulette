@@ -65,7 +65,7 @@ func (ctl *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	setUserSessionCookie(ctx, user.ID, sess, ctl.cookieHost)
+	ctl.setUserSessionCookies(ctx, user.ID, sess)
 	ctx.Status(http.StatusOK)
 }
 
@@ -118,7 +118,7 @@ func (ctl *AuthController) Register(ctx *gin.Context) {
 	if err == nil {
 		err = ctl.userDao.InsertSession(userId, session)
 		if err == nil {
-			setUserSessionCookie(ctx, userId, session, ctl.cookieHost)
+			ctl.setUserSessionCookies(ctx, userId, session)
 		}
 	}
 
@@ -164,9 +164,24 @@ func (ctl *AuthController) Token(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"access_token": token})
 }
 
-func setUserSessionCookie(ctx *gin.Context, userId int, session string, host string) {
-	ctx.SetCookie("userId", strconv.Itoa(userId), 0, "/", host, false, true)
-	ctx.SetCookie("session", session, 0, "/", host, false, true)
+func (ctl *AuthController) Logout(ctx *gin.Context) {
+	ctl.unsetUserSessionCookies(ctx)
+
+	ctx.Status(http.StatusOK)
+}
+
+func (ctl *AuthController) setUserSessionCookies(ctx *gin.Context, userId int, session string) {
+	setCookie(ctx, "userId", strconv.Itoa(userId), "/api/token", ctl.cookieHost, 86400)
+	setCookie(ctx, "session", session, "/api/token", ctl.cookieHost, 86400)
+}
+
+func (ctl *AuthController) unsetUserSessionCookies(ctx *gin.Context) {
+	setCookie(ctx, "userId", "", "/api/token", ctl.cookieHost, -1)
+	setCookie(ctx, "session", "", "/api/token", ctl.cookieHost, -1)
+}
+
+func setCookie(ctx *gin.Context, name, value, path, host string, maxAge int) {
+	ctx.SetCookie(name, value, maxAge, path, host, false, true)
 }
 
 func hashFromPassword(pass string) (string, error) {

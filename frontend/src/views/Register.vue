@@ -20,7 +20,7 @@
 </template>
 
 <script>
-    import backendService from "../services/BackendService";
+    import {backendService} from "../services/BackendService";
 
     export default {
         name: "Register",
@@ -37,9 +37,7 @@
                 if (this.pass1 === this.pass2) {
                     this.error = null;
 
-                    backendService.registerUser(this.email, this.pass1).then(response => {
-                        console.log(response)
-                    })
+                    backendService.registerUser(this.email, this.pass1).then(() => this.$router.push("/"))
                 } else {
                     this.error = "Passwords do not match!"
                 }
