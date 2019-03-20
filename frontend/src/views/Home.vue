@@ -4,10 +4,13 @@
             <div class="card col">
                 <div class="card-body">
                     <h4 class="card-title">Welcome to Dinner Dash</h4>
-                    <p class="card-text">Every tired of having to decide what to eat for the entire week?
-                        Maybe you buy groceries almost every day? With Dinner Dash, it is possible to save
-                        recipes that you want to make, and make Dinner Dash generate a dinner plan for you, that will
-                        last for a week.</p>
+                    <p class="card-text">Ever tired of having the struggle of figuring out what to make for dinner?
+                        Maybe you buy groceries almost every day of the week? With Dinner Dash, it is possible to save
+                        recipes that you like to make, and make Dinner Dash generate a dinner plan for you, that will
+                        last for a week.
+                        <br>
+                        In the future it will be possible to also get a shopping list to use for
+                        buying groceries which will fit the week's meal plan.</p>
                     <hr>
                     <h4 class="card-title">Feature implementation status</h4>
                     <p class="card-text">
@@ -24,13 +27,13 @@
                         <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>
                             List all recipes
                         </li>
-                        <li><span class="fa-li"><i class="far fa-times-circle text-danger"></i></span> Show single
+                        <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Show single
                             recipe
                         </li>
-                        <li><span class="fa-li"><i class="far fa-times-circle text-danger"></i></span>
+                        <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>
                             Edit recipe
                         </li>
-                        <li><span class="fa-li"><i class="far fa-times-circle text-danger"></i></span>
+                        <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>
                             Delete recipe
                         </li>
                         <li><span class="fa-li"><i class="far fa-times-circle text-danger"></i></span>

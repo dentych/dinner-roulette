@@ -24,7 +24,16 @@ class BackendService {
     }
 
     getRecipe(id) {
-        return recipes[id];
+        return axios.get(this.baseUrl + "/api/recipes/" + id, {headers: {Authorization: "Bearer " + authService.token}})
+            .then(response => {
+                return Promise.resolve(response.data)
+            }, err => {
+                if (err.response) {
+                    return Promise.reject(err)
+                } else {
+                    return Promise.reject(err)
+                }
+            })
     }
 
     saveRecipe(recipe) {
@@ -41,13 +50,17 @@ class BackendService {
     }
 
     updateRecipe(id, recipe) {
-        recipes[id] = recipe;
-        updateLocalStorage()
+        return axios.put(this.baseUrl + "/api/recipes/" + id, recipe, {headers: {Authorization: "Bearer " + authService.token}})
+            .catch(err => {
+                return Promise.reject(err.response ? err.response.data : err);
+            })
     }
 
     deleteRecipe(id) {
-        recipes.splice(id, 1);
-        updateLocalStorage()
+        return axios.delete(this.baseUrl + "/api/recipes/" + id, {headers: {Authorization: "Bearer " + authService.token}})
+            .catch(err => {
+                return Promise.reject(err.response ? err.response.data : err)
+            })
     }
 
     registerUser(user) {

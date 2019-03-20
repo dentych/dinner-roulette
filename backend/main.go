@@ -19,11 +19,11 @@ import (
 )
 
 func main() {
-	config := config.FromEnv()
+	configuration := config.FromEnv()
 
 	logging.Init()
-	database.Init(config.DbConfig)
-	database.RunMigrations(config.DbConfig)
+	database.Init(configuration.DbConfig)
+	database.RunMigrations(configuration.DbConfig)
 
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
@@ -37,7 +37,7 @@ func main() {
 	recipeDao := database.RecipeDao{}
 	userDao := database.UserDao{}
 
-	authController := controllers.NewAuthController(userDao, config.CookieHost)
+	authController := controllers.NewAuthController(userDao, configuration.CookieHost)
 
 	unprotectedApiRouter := router.Group("/api")
 	unprotectedApiRouter.GET("/", func(context *gin.Context) {
@@ -52,32 +52,6 @@ func main() {
 	protectedApiRouter.GET("/test", func(c *gin.Context) {
 		userid := c.GetInt("userid")
 		c.JSON(200, fmt.Sprintf("Authenticated as: %v", userid))
-	})
-	protectedApiRouter.PUT("/recipes", func(c *gin.Context) {
-		user := c.GetString("user")
-		var recipe models.Recipe
-		err := c.MustBindWith(&recipe, binding.JSON)
-		if err != nil {
-			logging.Error.Printf("Could not parse recipe: %s", err)
-			c.JSON(400, err.Error())
-			return
-		}
-
-		err = validateRecipe(recipe, true)
-		if err != nil {
-			logging.Info.Printf("Could not validate recipe object: %s", err)
-			c.JSON(400, "invalid recipe object")
-			return
-		}
-
-		err = recipeDao.Update(user, recipe)
-		if err != nil {
-			logging.Error.Printf("Error when updating recipe: %s", err)
-			c.JSON(500, "error when updating recipe: "+err.Error())
-			return
-		}
-
-		c.JSON(200, "updated")
 	})
 	protectedApiRouter.POST("/recipes", func(c *gin.Context) {
 		var recipe models.Recipe
@@ -107,21 +81,54 @@ func main() {
 		c.JSON(200, recipes)
 	})
 	protectedApiRouter.GET("/recipes/:id", func(c *gin.Context) {
-		idAsString := c.Param("id")
-		id, err := strconv.ParseInt(idAsString, 10, 64)
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 		if err != nil {
 			logging.Error.Printf("Error: %s", err)
 			c.JSON(400, "ID can't be parsed as int")
 			return
 		}
 
-		recipe := recipeDao.GetById(c.GetString("user"), id)
+		recipe := recipeDao.GetById(int64(c.GetInt("uid")), id)
 
 		if recipe != nil {
 			c.JSON(200, *recipe)
 		} else {
 			c.JSON(404, "not found")
 		}
+	})
+	protectedApiRouter.PUT("/recipes/:id", func(c *gin.Context) {
+		uid := c.GetInt("uid")
+		idParam := c.Param("id")
+		id, err := strconv.Atoi(idParam)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "invalid ID"})
+			return
+		}
+
+		var recipe models.Recipe
+		err = c.MustBindWith(&recipe, binding.JSON)
+		if err != nil {
+			logging.Error.Printf("Could not parse recipe: %s", err)
+			c.JSON(400, err.Error())
+			return
+		}
+
+		err = validateRecipe(recipe, false)
+		if err != nil {
+			logging.Info.Printf("Could not validate recipe object: %s", err)
+			c.JSON(400, "invalid recipe object")
+			return
+		}
+
+		recipe.ID = id
+		err = recipeDao.Update(uid, recipe)
+		if err != nil {
+			logging.Error.Printf("Error when updating recipe: %s", err)
+			c.JSON(500, "error when updating recipe: "+err.Error())
+			return
+		}
+
+		c.JSON(200, "updated")
 	})
 	protectedApiRouter.DELETE("/recipes/:id", func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -131,7 +138,7 @@ func main() {
 			return
 		}
 
-		recipeDeleted, err := recipeDao.Delete(c.GetString("user"), id)
+		recipeDeleted, err := recipeDao.Delete(c.GetInt("uid"), id)
 		if err != nil {
 			logging.Error.Printf("Error deleting recipe: %s", err)
 			c.JSON(500, "error while deleting recipe")

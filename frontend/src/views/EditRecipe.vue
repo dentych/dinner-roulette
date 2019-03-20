@@ -1,8 +1,9 @@
 <template>
     <div class="container">
         <div class="row justify-content-sm-center mb-4">
-            <div class="col col-sm-8" v-if="loaded">
+            <div class="col col-sm-8 mb-2" v-if="loaded">
                 <h2>Edit recipe</h2>
+                <div class="alert alert-danger" v-if="error">{{error}}</div>
                 <form @submit.prevent="editRecipe">
                     <div class="form-group">
                         <label for="name">Recipe name</label>
@@ -38,15 +39,20 @@
                 name: null,
                 url: null,
                 description: null,
-                loaded: false
+                loaded: false,
+                error: null
             }
         },
         mounted() {
-            let recipe = backendService.getRecipe(this.id)
-            this.name = recipe.name
-            this.url = recipe.url
-            this.description = recipe.description
-            this.loaded = true
+            backendService.getRecipe(this.id).then(recipe => {
+                this.error = null;
+                this.name = recipe.name;
+                this.url = recipe.url;
+                this.description = recipe.description;
+                this.loaded = true
+            }).catch(err => {
+                this.error = err
+            })
         },
         methods: {
             editRecipe() {
@@ -55,9 +61,11 @@
                     url: this.url,
                     description: this.description
                 };
-                backendService.updateRecipe(this.id, recipe);
-
-                this.$router.push("/recipes/" + this.id)
+                backendService.updateRecipe(this.id, recipe)
+                    .then(() => this.$router.push("/recipes/" + this.id))
+                    .catch(err => {
+                        this.error = err
+                    });
             },
             updateDescription(data) {
                 this.description = data

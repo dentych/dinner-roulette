@@ -40,12 +40,12 @@ func (dao *RecipeDao) GetAll(uid int) ([]models.Recipe, error) {
 	return recipes, nil
 }
 
-func (dao *RecipeDao) GetById(username string, id int64) *models.Recipe {
+func (dao *RecipeDao) GetById(uid, id int64) *models.Recipe {
 	db := GetConnection()
 
 	var recipe models.Recipe
-	sql := "SELECT id, name, url FROM recipe WHERE id = $1 AND userId = (SELECT id FROM public.user WHERE username = $2)"
-	err := db.Get(&recipe, sql, id, username)
+	sql := "SELECT id, name, url, description FROM recipe WHERE id = $1 AND userId = $2"
+	err := db.Get(&recipe, sql, id, uid)
 	if err != nil {
 		logging.Error.Println(err)
 		return nil
@@ -54,11 +54,11 @@ func (dao *RecipeDao) GetById(username string, id int64) *models.Recipe {
 	return &recipe
 }
 
-func (dao *RecipeDao) Update(username string, recipe models.Recipe) error {
+func (dao *RecipeDao) Update(uid int, recipe models.Recipe) error {
 	db := GetConnection()
 
-	sql := "UPDATE recipe SET name = $1, url = $2 WHERE id = $3"
-	_, err := db.Exec(sql, recipe.Name, recipe.Url, recipe.ID)
+	sql := "UPDATE recipe SET name = $1, url = $2, description = $3 WHERE id = $4 AND userid = $5"
+	_, err := db.Exec(sql, recipe.Name, recipe.Url, recipe.Description, recipe.ID, uid)
 	if err != nil {
 		logging.Error.Println(err)
 		return err
@@ -67,11 +67,11 @@ func (dao *RecipeDao) Update(username string, recipe models.Recipe) error {
 	return nil
 }
 
-func (dao *RecipeDao) Delete(username string, id int64) (bool, error) {
+func (dao *RecipeDao) Delete(uid int, id int64) (bool, error) {
 	db := GetConnection()
 
-	sql := "DELETE FROM recipe WHERE id = $1 AND userid = (SELECT id FROM public.user WHERE username = $2)"
-	result, err := db.Exec(sql, id, username)
+	sql := "DELETE FROM recipe WHERE id = $1 AND userid = $2"
+	result, err := db.Exec(sql, id, uid)
 	if err != nil {
 		logging.Error.Println(err)
 		return false, err

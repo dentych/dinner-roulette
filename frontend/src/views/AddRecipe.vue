@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="row justify-content-sm-center">
-            <div class="col col-sm-8">
+            <div class="col col-sm-8 mb-2">
                 <h2>Add a new recipe</h2>
                 <p>Fill out the below form to add a new recipe.</p>
                 <form @submit.prevent="saveRecipe">

@@ -31,17 +31,16 @@
         },
         mounted() {
             this.id = this.$route.params.id;
-            this.recipe = backendService.getRecipe(this.id)
+            backendService.getRecipe(this.id).then(recipe => this.recipe = recipe)
         },
         methods: {
             editRecipe() {
                 this.$router.push("/edit-recipe/" + this.id)
             },
             deleteRecipe() {
-                let confirmed = confirm("Are you sure you want to delete the recipe with ID: " + this.id + "?")
+                let confirmed = confirm("Are you sure you want to delete this recipe?");
                 if (confirmed) {
-                    backendService.deleteRecipe(this.id);
-                    this.$router.push("/recipes");
+                    backendService.deleteRecipe(this.id).then(() => this.$router.push("/recipes"));
                 }
             }
         }

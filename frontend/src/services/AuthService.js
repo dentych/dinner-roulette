@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 class AuthService {
     token = null;
@@ -21,11 +21,7 @@ class AuthService {
             return Promise.resolve()
         }, error => {
             localStorage.removeItem("authenticated");
-            if (error.response) {
-                return Promise.reject(error.response.data.message)
-            } else {
-                return Promise.reject("something went wrong. Try again later.")
-            }
+            return Promise.reject(error)
         })
     }
 

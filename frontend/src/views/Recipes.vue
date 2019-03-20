@@ -18,11 +18,11 @@
         </div>
         <div class="row mt-4" v-if="!recipes || recipes.length === 0">
             <div class="col text-center">
-                No recipes. Add your first recipe now!
+                {{message}}
             </div>
         </div>
         <div class="row mb-4" v-for="i in rowCount" :key="i">
-            <div class="col-12 mb-4 mb-sm-0 col-sm-3" v-for="(recipe, index) in itemsInRow(i)" :key="recipe.uid">
+            <div class="col-12 mb-4 mb-sm-0 col-sm-3" v-for="recipe in itemsInRow(i)" :key="recipe.uid">
                 <div class="card h-100">
                     <div class="card-body">
                         <h5 class="card-title">{{recipe.name}}</h5>
@@ -30,10 +30,10 @@
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between align-items-center">
-                            <router-link :to="{name: 'show-recipe', params: { id: calculateId(i, index) }}">
+                            <router-link :to="{name: 'show-recipe', params: { id: recipe.id }}">
                                 <button class="btn btn-sm btn-success">More info</button>
                             </router-link>
-                            <a class="badge badge-light remove-icon align-middle" @click="deleteRecipe(calculateId(i, index))">
+                            <a class="badge badge-light remove-icon align-middle" @click="deleteRecipe(recipe.id, recipe.name)">
                                 <i class="fas fa-times"></i>
                             </a>
                         </div>
@@ -63,7 +63,8 @@
             return {
                 loaded: false,
                 itemsPerRow: 4,
-                recipes: null
+                recipes: null,
+                message: "No recipes. Add your first recipe now!"
             }
         },
         computed: {
@@ -76,10 +77,10 @@
             itemsInRow(index) {
                 return this.recipes.slice((index - 1) * this.itemsPerRow, index * this.itemsPerRow)
             },
-            deleteRecipe(index) {
-                let confirmed = confirm("Delete recipe '" + this.recipes[index].name + "'?");
+            deleteRecipe(id, name) {
+                let confirmed = confirm("Delete recipe '" + name + "'?");
                 if (confirmed) {
-                    backendService.deleteRecipe(index)
+                    backendService.deleteRecipe(id)
                 }
             },
             shortDesc(description) {
@@ -100,8 +101,9 @@
                     }
                 });
                 this.recipes = data
-            }).catch(() => {
-                this.recipes = []
+            }).catch(err => {
+                this.recipes = [];
+                this.message = "Error retrieving recipes... (" + err + ")"
             })
         }
     }
