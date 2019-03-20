@@ -31,7 +31,7 @@ func AuthRequired() gin.HandlerFunc {
 			abortRequest(c)
 			return
 		} else {
-			c.Set("userid", claims.UserId)
+			c.Set("uid", claims.UserId)
 			c.Next()
 		}
 	}

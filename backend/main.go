@@ -30,6 +30,8 @@ func main() {
 	corsConfig.AllowCredentials = true
 	corsConfig.AllowOrigins = []string{"http://localhost:8080", "http://dinner-dash.tychsen.me"}
 	//corsConfig.AllowAllOrigins = true
+	corsConfig.AllowHeaders = []string{"authorization", "content-type", "charset"}
+	corsConfig.AllowWildcard = true
 	router.Use(cors.New(corsConfig))
 
 	recipeDao := database.RecipeDao{}
@@ -51,7 +53,7 @@ func main() {
 		userid := c.GetInt("userid")
 		c.JSON(200, fmt.Sprintf("Authenticated as: %v", userid))
 	})
-	protectedApiRouter.PUT("/recipe", func(c *gin.Context) {
+	protectedApiRouter.PUT("/recipes", func(c *gin.Context) {
 		user := c.GetString("user")
 		var recipe models.Recipe
 		err := c.MustBindWith(&recipe, binding.JSON)
@@ -77,7 +79,7 @@ func main() {
 
 		c.JSON(200, "updated")
 	})
-	protectedApiRouter.POST("/recipe", func(c *gin.Context) {
+	protectedApiRouter.POST("/recipes", func(c *gin.Context) {
 		var recipe models.Recipe
 		err := c.MustBindWith(&recipe, binding.JSON)
 		if err != nil {
@@ -91,12 +93,12 @@ func main() {
 			return
 		}
 
-		recipeDao.Insert(c.GetString("user"), &recipe)
+		recipeDao.Insert(c.GetInt("uid"), &recipe)
 
 		c.JSON(201, recipe)
 	})
-	protectedApiRouter.GET("/recipe", func(c *gin.Context) {
-		recipes, err := recipeDao.GetAll(c.GetString("user"))
+	protectedApiRouter.GET("/recipes", func(c *gin.Context) {
+		recipes, err := recipeDao.GetAll(c.GetInt("uid"))
 		if err != nil {
 			c.JSON(500, "error while getting recipes")
 			return
@@ -104,7 +106,7 @@ func main() {
 
 		c.JSON(200, recipes)
 	})
-	protectedApiRouter.GET("/recipe/:id", func(c *gin.Context) {
+	protectedApiRouter.GET("/recipes/:id", func(c *gin.Context) {
 		idAsString := c.Param("id")
 		id, err := strconv.ParseInt(idAsString, 10, 64)
 		if err != nil {
@@ -121,7 +123,7 @@ func main() {
 			c.JSON(404, "not found")
 		}
 	})
-	protectedApiRouter.DELETE("/recipe/:id", func(c *gin.Context) {
+	protectedApiRouter.DELETE("/recipes/:id", func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 		if err != nil {
 			logging.Error.Printf("Error: %s", err)
@@ -143,7 +145,7 @@ func main() {
 	})
 
 	protectedApiRouter.POST("/mealplan", func(c *gin.Context) {
-		recipes, err := recipeDao.GetAll(c.GetString("user"))
+		recipes, err := recipeDao.GetAll(c.GetInt("uid"))
 		if err != nil {
 			c.JSON(500, "Error getting recipes while generating meal plan")
 			return

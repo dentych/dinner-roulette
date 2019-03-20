@@ -89,6 +89,11 @@ func (ctl *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 
+	if isEmptyOrWhitespace(u.FirstName) || isEmptyOrWhitespace(u.LastName) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "first and last name should be filled out"})
+		return
+	}
+
 	exists, err := ctl.userDao.EmailExists(u.Email)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error.", "error_code": "A2"})
@@ -106,7 +111,7 @@ func (ctl *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 
-	userToSave := models.User{Email: u.Email, PasswordHash: hash}
+	userToSave := models.User{Email: u.Email, PasswordHash: hash, FirstName: u.FirstName, LastName: u.LastName}
 
 	userId, err := ctl.userDao.Insert(userToSave)
 	if err != nil {
@@ -194,6 +199,8 @@ func isEmptyOrWhitespace(str string) bool {
 }
 
 type user struct {
-	Email    string `json:"email,omitempty"`
-	Password string `json:"password,omitempty"`
+	Email     string `json:"email,omitempty"`
+	Password  string `json:"password,omitempty"`
+	FirstName string `json:"firstName,omitempty"`
+	LastName  string `json:"lastName,omitempty"`
 }

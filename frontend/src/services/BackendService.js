@@ -1,4 +1,5 @@
 import axios from "axios";
+import {authService} from "./AuthService";
 
 var recipes = [];
 
@@ -7,13 +8,19 @@ function updateLocalStorage() {
 }
 
 class BackendService {
-    constructor() {
-        let json = localStorage.getItem("recipes");
-        recipes = json ? JSON.parse(json) : [];
-    }
+    baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
 
     getAllRecipes() {
-        return recipes;
+        return axios.get(this.baseUrl + "/api/recipes", {headers: {Authorization: "Bearer " + authService.token}})
+            .then(response => {
+                return Promise.resolve(response.data)
+            }, error => {
+                if (error.response) {
+                    return Promise.reject(error.response.status)
+                } else {
+                    return Promise.reject(error)
+                }
+            });
     }
 
     getRecipe(id) {
@@ -21,9 +28,16 @@ class BackendService {
     }
 
     saveRecipe(recipe) {
-        recipe.uid = Math.random() * 1000;
-        recipes.push(recipe);
-        updateLocalStorage()
+        return axios.post(this.baseUrl + "/api/recipes", recipe, {headers: {Authorization: "Bearer " + authService.token}})
+            .then(response => {
+                return Promise.resolve(response.data)
+            }, error => {
+                if (error.response) {
+                    return Promise.reject(error.response.status)
+                } else {
+                    return Promise.reject(error)
+                }
+            })
     }
 
     updateRecipe(id, recipe) {
@@ -36,9 +50,8 @@ class BackendService {
         updateLocalStorage()
     }
 
-    registerUser(email, pass1) {
-        let user = {email: email, password: pass1};
-        return axios.post("http://localhost:8081/api/register", user)
+    registerUser(user) {
+        return axios.post(this.baseUrl + "/api/register", user)
     }
 }
 

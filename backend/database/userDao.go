@@ -11,8 +11,8 @@ type UserDao struct {
 func (dao *UserDao) Insert(user models.User) (int, error) {
 	db := GetConnection()
 
-	query := "INSERT INTO public.user (email, passwordHash) VALUES ($1, $2) RETURNING id"
-	result := db.QueryRowx(query, user.Email, user.PasswordHash)
+	query := "INSERT INTO public.user (email, passwordHash, firstName, lastName) VALUES ($1, $2, $3, $4) RETURNING id"
+	result := db.QueryRowx(query, user.Email, user.PasswordHash, user.FirstName, user.LastName)
 	var value int
 	err := result.Scan(&value)
 	if err != nil {

@@ -16,9 +16,15 @@
                 </router-link>
             </ul>
             <button class="btn btn-outline-light" @click="logOut" v-if="authService.token">Log out</button>
-            <router-link to="/login" v-if="!authService.token">
-                <button class="btn btn-outline-light">Log in</button>
-            </router-link>
+            <div class="float-right" v-if="!authService.token">
+                <router-link to="/register">
+                    <button class="btn btn-outline-light">Register</button>
+                </router-link>
+                &nbsp;
+                <router-link to="/login">
+                    <button class="btn btn-outline-light">Log in</button>
+                </router-link>
+            </div>
         </div>
     </nav>
 </template>
@@ -35,7 +41,8 @@
         },
         methods: {
             logOut() {
-                authService.logout()
+                authService.logout();
+                this.$router.push({name: "home"})
             }
         },
         watch: {

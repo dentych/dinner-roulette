@@ -93,7 +93,16 @@
             }
         },
         mounted() {
-            this.recipes = backendService.getAllRecipes()
+            backendService.getAllRecipes().then(data => {
+                data.forEach(e => {
+                    if (!e.description) {
+                        e.description = ""
+                    }
+                });
+                this.recipes = data
+            }).catch(() => {
+                this.recipes = []
+            })
         }
     }
 </script>

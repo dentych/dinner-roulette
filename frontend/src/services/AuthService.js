@@ -2,10 +2,14 @@ const axios = require("axios");
 
 class AuthService {
     token = null;
-    baseUrl = "http://localhost:8081";
+    baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
 
     constructor() {
         this.getToken()
+    }
+
+    isLoggedIn() {
+        return this.token || localStorage.getItem("authenticated")
     }
 
     login(email, password) {

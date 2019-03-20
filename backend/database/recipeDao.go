@@ -9,12 +9,12 @@ import (
 type RecipeDao struct {
 }
 
-func (dao *RecipeDao) Insert(username string, m *models.Recipe) int {
+func (dao *RecipeDao) Insert(uid int, m *models.Recipe) int {
 	db := GetConnection()
 
-	sql := `INSERT INTO public.recipe (name, url, userid)
-VALUES ($1, $2, (SELECT id FROM public.user WHERE username=$3)) RETURNING id`
-	result := db.QueryRowx(sql, m.Name, m.Url, username)
+	sql := `INSERT INTO public.recipe (name, url, description, userid)
+VALUES ($1, $2, $3, $4) RETURNING id`
+	result := db.QueryRowx(sql, m.Name, m.Url, *m.Description, uid)
 	var value int
 	err := result.Scan(&value)
 	if err != nil {
@@ -25,12 +25,12 @@ VALUES ($1, $2, (SELECT id FROM public.user WHERE username=$3)) RETURNING id`
 	return 1
 }
 
-func (dao *RecipeDao) GetAll(username string) ([]models.Recipe, error) {
+func (dao *RecipeDao) GetAll(uid int) ([]models.Recipe, error) {
 	db := GetConnection()
 
 	var recipes = make([]models.Recipe, 0, 0)
-	sql := "SELECT id, name, url FROM recipe WHERE userId = (SELECT id FROM public.user WHERE username = $1)"
-	err := db.Select(&recipes, sql, username)
+	sql := "SELECT id, name, url, description FROM recipe WHERE userId = $1"
+	err := db.Select(&recipes, sql, uid)
 
 	if err != nil {
 		logging.Error.Println(err)

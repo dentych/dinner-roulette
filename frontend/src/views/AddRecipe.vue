@@ -37,7 +37,7 @@
         },
         methods: {
             saveRecipe() {
-                backendService.saveRecipe({name: this.name, url: this.url, description: this.description})
+                backendService.saveRecipe({name: this.name, url: this.url, description: this.description});
                 this.$router.push("/recipes")
             },
             updateDescription(data) {

@@ -3,15 +3,19 @@ package models
 import "time"
 
 type Recipe struct {
-	ID   int    `json:"id,omitempty"`
-	Name string `json:"name"`
-	Url  string `json:"url,omitempty"`
+	ID          int    `json:"id,omitempty"`
+	Name        string `json:"name"`
+	Url         string `json:"url"`
+	Description *string `json:"description"`
 }
 
 type User struct {
-	ID           int
-	Email        string
-	PasswordHash string
+	ID               int
+	Email            string
+	PasswordHash     string
+	FirstName        string
+	LastName         string
+	CreatedTimestamp time.Time
 }
 
 type Session struct {

@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-4">
+            <div class="col-12 col-sm-4">
                 <form @submit.prevent="login">
                     <div class="form-group">
                         <label for="email">Email address</label>
