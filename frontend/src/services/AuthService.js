@@ -26,13 +26,9 @@ class AuthService {
     }
 
     getToken() {
-        return axios.post(this.baseUrl + "/api/token", null, {withCredentials: true})
-            .then(response => {
-                this.token = response.data.access_token;
-                return {success: true, data: response.data}
-            }, () => {
-                return {success: false, data: null}
-            })
+        // this.token = new Promise((res, rej) => {
+        //
+        // })
     }
 
     logout() {
@@ -40,6 +36,15 @@ class AuthService {
         this.token = null;
         localStorage.removeItem("authenticated")
     }
+}
+
+function sendTokenRequest(baseUrl) {
+    return axios.post(baseUrl + "/api/token", null, {withCredentials: true})
+        .then(response => {
+            return {success: true, data: response.data}
+        }, () => {
+            return {success: false, data: null}
+        })
 }
 
 const authService = new AuthService();

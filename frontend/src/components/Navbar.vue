@@ -14,8 +14,11 @@
                 <router-link to="/recipes" tag="li" class="nav-item">
                     <a class="nav-link">Recipes</a>
                 </router-link>
+                <router-link to="/meal-plans" tag="li" class="nav-item">
+                    <a class="nav-link">Meal plans</a>
+                </router-link>
             </ul>
-            <button class="btn btn-outline-light" @click="logOut" v-if="authService.token">Log out</button>
+            <button class="btn btn-outline-light float-right" @click="logOut" v-if="authService.token">Log out</button>
             <div class="float-right" v-if="!authService.token">
                 <router-link to="/register">
                     <button class="btn btn-outline-light">Register</button>

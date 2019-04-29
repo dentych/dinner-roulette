@@ -1,12 +1,6 @@
 import axios from "axios";
 import {authService} from "./AuthService";
 
-var recipes = [];
-
-function updateLocalStorage() {
-    localStorage.setItem("recipes", JSON.stringify(recipes))
-}
-
 class BackendService {
     baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
 

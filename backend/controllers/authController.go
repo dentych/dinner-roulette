@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"github.com/dentych/dinner-dash/config"
 	"github.com/dentych/dinner-dash/database"
 	"github.com/dentych/dinner-dash/logging"
 	"github.com/dentych/dinner-dash/models"
@@ -186,7 +187,7 @@ func (ctl *AuthController) unsetUserSessionCookies(ctx *gin.Context) {
 }
 
 func setCookie(ctx *gin.Context, name, value, path, host string, maxAge int) {
-	ctx.SetCookie(name, value, maxAge, path, host, false, true)
+	ctx.SetCookie(name, value, maxAge, path, host, config.IsProd(), true)
 }
 
 func hashFromPassword(pass string) (string, error) {

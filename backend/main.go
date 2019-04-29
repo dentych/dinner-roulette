@@ -28,11 +28,13 @@ func main() {
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{"http://localhost:8080", "http://dinner-dash.tychsen.me"}
+	corsConfig.AllowOrigins = []string{"http://localhost:8080", "http://dinner-dash.tychsen.me", "https://dinner-dash.tychsen.me"}
 	//corsConfig.AllowAllOrigins = true
 	corsConfig.AllowHeaders = []string{"authorization", "content-type", "charset"}
 	corsConfig.AllowWildcard = true
 	router.Use(cors.New(corsConfig))
+
+	router.Static("/", "./dist")
 
 	recipeDao := database.RecipeDao{}
 	userDao := database.UserDao{}

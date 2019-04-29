@@ -1,5 +1,7 @@
 package config
 
+import "github.com/gin-gonic/gin"
+
 func FromEnv() *Configuration {
 	return &Configuration{
 		DbConfig: DatabaseConfig{
@@ -10,6 +12,10 @@ func FromEnv() *Configuration {
 		},
 		CookieHost: GetenvOrDefault("DINNERDASH_COOKIE_HOST", "localhost"),
 	}
+}
+
+func IsProd() bool {
+	return gin.Mode() == gin.ReleaseMode
 }
 
 type Configuration struct {

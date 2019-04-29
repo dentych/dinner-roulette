@@ -5,6 +5,6 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "dinner-dash"
+      POSTGRES_DB: "dinnerdash"
     ports:
       - 5432:5432

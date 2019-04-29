@@ -33,7 +33,7 @@
                             <router-link :to="{name: 'show-recipe', params: { id: recipe.id }}">
                                 <button class="btn btn-sm btn-success">More info</button>
                             </router-link>
-                            <a class="badge badge-light remove-icon align-middle" @click="deleteRecipe(recipe.id, recipe.name)">
+                            <a class="badge badge-light remove-icon align-middle" @click="deleteRecipe(recipe)">
                                 <i class="fas fa-times"></i>
                             </a>
                         </div>
@@ -77,10 +77,15 @@
             itemsInRow(index) {
                 return this.recipes.slice((index - 1) * this.itemsPerRow, index * this.itemsPerRow)
             },
-            deleteRecipe(id, name) {
+            deleteRecipe(recipe) {
                 let confirmed = confirm("Delete recipe '" + name + "'?");
                 if (confirmed) {
-                    backendService.deleteRecipe(id)
+                    backendService.deleteRecipe(recipe.id).then(() => {
+                        let pos = this.recipes.indexOf(recipe)
+                        if (pos > -1) {
+                            this.recipes.splice(pos, 1)
+                        }
+                    })
                 }
             },
             shortDesc(description) {

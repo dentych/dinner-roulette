@@ -9,6 +9,8 @@ import Login from "./views/Login";
 import Recipes from "./views/Recipes";
 import RouterViewOnly from "./views/RouterViewOnly";
 import {authService} from "./services/AuthService";
+import MealPlans from "./views/MealPlans";
+import GenerateMealPlan from "./views/GenerateMealPlan";
 
 Vue.use(Router);
 
@@ -50,6 +52,22 @@ export default new Router({
                     // this generates a separate chunk (about.[hash].js) for this route
                     // which is lazy-loaded when the route is visited.
                     component: Recipes
+                },
+                {
+                    path: 'meal-plans',
+                    name: 'meal plans',
+                    // route level code-splitting
+                    // this generates a separate chunk (about.[hash].js) for this route
+                    // which is lazy-loaded when the route is visited.
+                    component: MealPlans
+                },
+                {
+                    path: 'meal-plans/generate',
+                    name: 'generate meal plan',
+                    // route level code-splitting
+                    // this generates a separate chunk (about.[hash].js) for this route
+                    // which is lazy-loaded when the route is visited.
+                    component: GenerateMealPlan
                 },
                 {
                     path: "recipes/:id",

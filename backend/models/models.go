@@ -24,3 +24,7 @@ type Session struct {
 	SessionId string
 	ValidTo   time.Time
 }
+
+type MealPlan struct {
+	Recipes []Recipe
+}
