@@ -23,7 +23,7 @@ func main() {
 
 	logging.Init()
 	database.Init(configuration.DbConfig)
-	database.RunMigrations(configuration.DbConfig)
+	//database.RunMigrations(configuration.DbConfig)
 
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
@@ -33,8 +33,6 @@ func main() {
 	corsConfig.AllowHeaders = []string{"authorization", "content-type", "charset"}
 	corsConfig.AllowWildcard = true
 	router.Use(cors.New(corsConfig))
-
-	router.Static("/", "./dist")
 
 	recipeDao := database.RecipeDao{}
 	userDao := database.UserDao{}

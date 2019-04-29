@@ -4,7 +4,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v0.0.0-20190301062745-f9e10995c85a
 	github.com/gin-gonic/gin v1.3.0
-	github.com/golang-migrate/migrate/v4 v4.2.5
+	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/golang/protobuf v1.3.0 // indirect
 	github.com/jmoiron/sqlx v0.0.0-20180614180643-0dae4fefe7c0
 	github.com/lib/pq v1.0.0
@@ -13,4 +13,5 @@ require (
 	golang.org/x/net v0.0.0-20190310074541-c10a0554eabf // indirect
 	golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6 // indirect
 	golang.org/x/sys v0.0.0-20190310054646-10058d7d4faa // indirect
+	google.golang.org/appengine v1.5.0 // indirect
 )
