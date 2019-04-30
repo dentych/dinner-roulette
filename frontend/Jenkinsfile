@@ -1,15 +1,14 @@
 pipeline {
-    agent {
-        docker "node:alpine"
-    }
+    agent any
 
-    node {
-        stages {
-            stage("Build") {
-                steps {
-                    dir("frontend")
-                    sh "npm install"
-                    sh "npm run build"
+    stages {
+        stage("Build docker image") {
+            steps {
+                echo "Building frontend docker image"
+                dir("frontend") {
+                    script {
+                        def img = docker.build("dinnerdash/frontend")
+                    }
                 }
             }
         }
