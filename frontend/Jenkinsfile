@@ -1,0 +1,12 @@
+pipeline {
+    agent {
+        docker "node:alpine"
+    }
+
+    stages {
+        stage("Build") {
+            sh "npm install"
+            sh "npm run build"
+        }
+    }
+}
