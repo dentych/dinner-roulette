@@ -16,13 +16,14 @@ class AuthService {
         return axios.post(this.baseUrl + "/api/login", {
             email: email,
             password: password
-        }, {withCredentials: true}).then(() => {
-            localStorage.setItem("authenticated", "true");
-            return Promise.resolve()
-        }, error => {
-            localStorage.removeItem("authenticated");
-            return Promise.reject(error)
-        })
+        }, {withCredentials: true})
+            .then(() => {
+                localStorage.setItem("authenticated", "true");
+                return Promise.resolve()
+            }, error => {
+                localStorage.removeItem("authenticated");
+                return Promise.reject(error)
+            })
     }
 
     getToken() {

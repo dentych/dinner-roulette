@@ -40,7 +40,11 @@
                 }).then(() => {
                     this.$router.push({name: "home"})
                 }).catch(error => {
-                    this.errorMsg = "Error logging in: " + JSON.stringify(error)
+                    if (error.response && error.response.status === 400) {
+                        this.errorMsg = "Username or password incorrect."
+                    } else {
+                        this.errorMsg = "Error logging in: " + JSON.stringify(error)
+                    }
                 })
             }
         }
