@@ -5,7 +5,7 @@ pipeline {
         stage("Build backend docker image") {
             steps {
                 dir("backend") {
-                    withDockerRegistry({url: "", credentialsId: "docker-hub-dentych") {
+                    withDockerRegistry({url: "", credentialsId: "docker-hub-dentych"}) {
                         script {
                             def img = docker.build("dinnerdash/backend")
                             img.push()
