@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                def currentFolder = pwd
+                def currentFolder = pwd()
                 
                 echo currentFolder
             }
