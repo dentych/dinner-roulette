@@ -5,7 +5,6 @@ pipeline {
         stage("Build backend docker image") {
             steps {
                 dir("backend") {
-                }
                     script {
                         docker.withRegistry("", "docker-hub-dentych")
                         def img = docker.build("dinnerdash/backend")
