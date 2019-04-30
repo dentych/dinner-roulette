@@ -37,12 +37,8 @@
                 this.errorMsg = null;
                 authService.login(this.email, this.password).then(() => {
                     return authService.getToken()
-                }).then(response => {
-                    if (response.success) {
-                        this.$router.push({name: "home"})
-                    } else {
-                        this.errorMsg = "Error retrieving token..."
-                    }
+                }).then(() => {
+                    this.$router.push({name: "home"})
                 }).catch(error => {
                     this.errorMsg = "Error logging in: " + JSON.stringify(error)
                 })

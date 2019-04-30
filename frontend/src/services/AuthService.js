@@ -26,9 +26,13 @@ class AuthService {
     }
 
     getToken() {
-        // this.token = new Promise((res, rej) => {
-        //
-        // })
+        return axios.post(this.baseUrl + "/api/token", null, {withCredentials: true})
+            .then(res => {
+                this.token = res.data.access_token;
+                return Promise.resolve()
+            }).catch(err => {
+                return Promise.reject(err)
+            })
     }
 
     logout() {
