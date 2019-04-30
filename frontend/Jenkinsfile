@@ -6,9 +6,9 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                def currentFolder = pwd()
-                
-                echo currentFolder
+                dir("frontend")
+                sh "npm install"
+                sh "npm run build"
             }
         }
     }
