@@ -3,12 +3,14 @@ pipeline {
         docker "node:alpine"
     }
 
-    stages {
-        stage("Build") {
-            steps {
-                dir("frontend")
-                sh "npm install"
-                sh "npm run build"
+    node {
+        stages {
+            stage("Build") {
+                steps {
+                    dir("frontend")
+                    sh "npm install"
+                    sh "npm run build"
+                }
             }
         }
     }
