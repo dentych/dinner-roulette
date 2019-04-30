@@ -1,17 +1,16 @@
 pipeline {
-  agent {
-    docker 'golang'
-  }
-  stages {
-    stage('build') {
-      steps {
-        sh 'go build -v'
-      }
+    agent any
+
+    stages {
+        stage("Build backend docker image") {
+            steps {
+                dir("backend") {
+                    script {
+                        def img = docker.build("dinnerdash/backend")
+                        img.push()
+                    }
+                }
+            }
+        }
     }
-    stage('test') {
-      steps {
-        sh 'go test'
-      }
-    }
-  }
 }
