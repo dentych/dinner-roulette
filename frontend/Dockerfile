@@ -10,6 +10,7 @@ RUN npm run build
 # Build real image
 FROM nginx
 
-COPY --from=0 /work/dist/ /usr/share/nginx/html
+COPY --from=0 /work/dist/ /www/
+COPY docker/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
