@@ -2,12 +2,14 @@ pipeline {
     agent any
 
     stages {
-        stage("Build docker image") {
+        stage("Build frontend docker image") {
             steps {
-                echo "Building frontend docker image"
                 dir("frontend") {
-                    script {
-                        def img = docker.build("dinnerdash/frontend")
+                    withDockerRegistry([url: "", credentialsId: "docker-hub-dentych"]) {
+                        script {
+                            def img = docker.build("dinnerdash/frontend")
+                            img.push()
+                        }
                     }
                 }
             }
