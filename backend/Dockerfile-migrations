@@ -1,0 +1,13 @@
+FROM golang:alpine AS migrate-builder
+
+RUN apk add git && go get -tags 'postgres' -u github.com/golang-migrate/migrate/cmd/migrate
+
+FROM alpine
+
+WORKDIR /migrate
+
+VOLUME ["/migrate/migrations"]
+
+COPY --from=0 /go/bin/migrate /migrate/migrate
+
+ENTRYPOINT ["./migrate"]
