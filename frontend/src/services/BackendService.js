@@ -54,7 +54,9 @@ class BackendService {
 }
 
 function headerWithAuth(headers) {
-    return Object.assign({Authorization: "Bearer " + authService.token}, headers)
+    return authService.token === null ?
+        headers :
+        Object.assign({Authorization: "Bearer " + authService.token}, headers)
 }
 
 const backendService = new BackendService();
