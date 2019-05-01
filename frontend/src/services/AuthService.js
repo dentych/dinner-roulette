@@ -2,10 +2,11 @@ import axios from "axios";
 
 class AuthService {
     token = null;
-    baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+    refreshRate = 4.5 * 60 * 1000;
 
     constructor() {
-        this.getToken()
+        this.getToken();
+        setInterval(this.getToken, this.refreshRate)
     }
 
     isLoggedIn() {
@@ -13,7 +14,7 @@ class AuthService {
     }
 
     login(email, password) {
-        return axios.post(this.baseUrl + "/api/login", {
+        return axios.post("/api/login", {
             email: email,
             password: password
         }, {withCredentials: true})
@@ -27,7 +28,7 @@ class AuthService {
     }
 
     getToken() {
-        return axios.post(this.baseUrl + "/api/token", null, {withCredentials: true})
+        return axios.post("/api/token", null, {withCredentials: true})
             .then(res => {
                 this.token = res.data.access_token;
                 return Promise.resolve()
@@ -37,19 +38,10 @@ class AuthService {
     }
 
     logout() {
-        axios.post(this.baseUrl + "/api/logout", null, {withCredentials: true});
+        axios.post("/api/logout", null, {withCredentials: true});
         this.token = null;
         localStorage.removeItem("authenticated")
     }
-}
-
-function sendTokenRequest(baseUrl) {
-    return axios.post(baseUrl + "/api/token", null, {withCredentials: true})
-        .then(response => {
-            return {success: true, data: response.data}
-        }, () => {
-            return {success: false, data: null}
-        })
 }
 
 const authService = new AuthService();

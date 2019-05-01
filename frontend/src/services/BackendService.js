@@ -2,11 +2,6 @@ import axios from "axios";
 import {authService} from "./AuthService";
 
 class BackendService {
-    baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-    instance = axios.create({
-        baseURL: this.baseUrl
-    });
-
     getAllRecipes() {
         return this.sendRequestWithRetry("get", "/api/recipes")
             .then(res => Promise.resolve(res.data))
@@ -33,7 +28,7 @@ class BackendService {
     }
 
     registerUser(user) {
-        return this.instance.post("/api/register", user)
+        return axios.post("/api/register", user)
     }
 
     sendRequestWithRetry(method, url, data, headers) {
@@ -49,7 +44,7 @@ class BackendService {
     }
 
     sendRequest(method, url, data, headers) {
-        return this.instance({
+        return axios({
             method: method,
             url: url,
             headers: headerWithAuth(headers),
