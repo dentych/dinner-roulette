@@ -13,27 +13,25 @@ const headerAuthorization = "Authorization"
 
 // None header: eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0
 
-func AuthRequired() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader(headerAuthorization)
-		authHeader = strings.TrimSpace(authHeader)
+func AuthRequired(c *gin.Context) {
+	authHeader := c.GetHeader(headerAuthorization)
+	authHeader = strings.TrimSpace(authHeader)
 
-		if !strings.HasPrefix(authHeader, "Bearer ") || len(authHeader) < 1 {
-			logging.Error.Println("Error:", fmt.Errorf("auth header missing"))
-			abortRequest(c)
-			return
-		}
+	if !strings.HasPrefix(authHeader, "Bearer ") || len(authHeader) < 1 {
+		logging.Error.Println("Error:", fmt.Errorf("auth header missing"))
+		abortRequest(c)
+		return
+	}
 
-		authHeader = strings.Split(authHeader, " ")[1]
+	authHeader = strings.Split(authHeader, " ")[1]
 
-		if claims, err := security.ValidateJwt(authHeader); err != nil {
-			logging.Error.Printf("Error validating JWT: %v", err)
-			abortRequest(c)
-			return
-		} else {
-			c.Set("uid", claims.UserId)
-			c.Next()
-		}
+	if claims, err := security.ValidateJwt(authHeader); err != nil {
+		logging.Error.Printf("Error validating JWT: %v", err)
+		abortRequest(c)
+		return
+	} else {
+		c.Set("uid", claims.UserId)
+		c.Next()
 	}
 }
 

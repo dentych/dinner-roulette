@@ -48,7 +48,7 @@ func main() {
 	unprotectedApiRouter.POST("/token", authController.Token)
 	unprotectedApiRouter.POST("/logout", authController.Logout)
 
-	protectedApiRouter := router.Group("/api", middleware.AuthRequired())
+	protectedApiRouter := router.Group("/api", middleware.AuthRequired)
 	protectedApiRouter.GET("/test", func(c *gin.Context) {
 		userid := c.GetInt("userid")
 		c.JSON(200, fmt.Sprintf("Authenticated as: %v", userid))
