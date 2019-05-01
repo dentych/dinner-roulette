@@ -29,7 +29,7 @@ func (dao *RecipeDao) GetAll(uid int) ([]models.Recipe, error) {
 	db := GetConnection()
 
 	var recipes = make([]models.Recipe, 0, 0)
-	sql := "SELECT id, name, url, description FROM recipe WHERE userId = $1"
+	sql := "SELECT id, name, url, description FROM recipe WHERE userId = $1 ORDER BY id"
 	err := db.Select(&recipes, sql, uid)
 
 	if err != nil {

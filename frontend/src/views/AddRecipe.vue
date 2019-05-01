@@ -7,11 +7,13 @@
                 <form @submit.prevent="saveRecipe">
                     <div class="form-group">
                         <label for="name">Recipe name</label>
-                        <input type="text" v-model="name" class="form-control" id="name" placeholder="Enter a name for your recipe" autocomplete="off">
+                        <input type="text" v-model="name" class="form-control" id="name"
+                               placeholder="Enter a name for your recipe" autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label for="url">Recipe link</label>
-                        <input type="url" v-model="url" class="form-control" id="url" placeholder="http://recipeplace.com/somerecipe">
+                        <input type="url" v-model="url" class="form-control" id="url"
+                               placeholder="http://recipeplace.com/somerecipe">
                     </div>
                     <growing-text-area @update="updateDescription"></growing-text-area>
                     <button type="submit" class="btn btn-success float-right">Submit</button>
@@ -37,8 +39,9 @@
         },
         methods: {
             saveRecipe() {
-                backendService.saveRecipe({name: this.name, url: this.url, description: this.description});
-                this.$router.push("/recipes")
+                backendService.saveRecipe({name: this.name, url: this.url, description: this.description}).then(() => {
+                    this.$router.push("/recipes")
+                });
             },
             updateDescription(data) {
                 this.description = data

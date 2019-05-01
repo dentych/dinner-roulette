@@ -3,63 +3,63 @@ import {authService} from "./AuthService";
 
 class BackendService {
     baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+    instance = axios.create({
+        baseURL: this.baseUrl
+    });
 
     getAllRecipes() {
-        return axios.get(this.baseUrl + "/api/recipes", {headers: {Authorization: "Bearer " + authService.token}})
-            .then(response => {
-                return Promise.resolve(response.data)
-            }, error => {
-                if (error.response) {
-                    return Promise.reject(error.response.status)
-                } else {
-                    return Promise.reject(error)
-                }
-            });
+        return this.sendRequestWithRetry("get", "/api/recipes")
+            .then(res => Promise.resolve(res.data))
     }
 
     getRecipe(id) {
-        return axios.get(this.baseUrl + "/api/recipes/" + id, {headers: {Authorization: "Bearer " + authService.token}})
-            .then(response => {
-                return Promise.resolve(response.data)
-            }, err => {
-                if (err.response) {
-                    return Promise.reject(err)
-                } else {
-                    return Promise.reject(err)
-                }
-            })
+        return this.sendRequestWithRetry("get", "/api/recipes/" + id)
+            .then(res => Promise.resolve(res.data))
     }
 
     saveRecipe(recipe) {
-        return axios.post(this.baseUrl + "/api/recipes", recipe, {headers: {Authorization: "Bearer " + authService.token}})
-            .then(response => {
-                return Promise.resolve(response.data)
-            }, error => {
-                if (error.response) {
-                    return Promise.reject(error.response.status)
-                } else {
-                    return Promise.reject(error)
-                }
-            })
+        return this.sendRequestWithRetry("post", "/api/recipes", recipe)
+            .then(res => Promise.resolve(res.data))
     }
 
     updateRecipe(id, recipe) {
-        return axios.put(this.baseUrl + "/api/recipes/" + id, recipe, {headers: {Authorization: "Bearer " + authService.token}})
-            .catch(err => {
-                return Promise.reject(err.response ? err.response.data : err);
-            })
+        return this.sendRequestWithRetry("put", "/api/recipes/" + id, recipe)
+            .catch(err => Promise.reject(err.response ? err.response.data : err))
     }
 
     deleteRecipe(id) {
-        return axios.delete(this.baseUrl + "/api/recipes/" + id, {headers: {Authorization: "Bearer " + authService.token}})
-            .catch(err => {
-                return Promise.reject(err.response ? err.response.data : err)
-            })
+        return this.sendRequestWithRetry("delete", "/api/recipes/" + id)
+            .catch(err => Promise.reject(err.response ? err.response.data : err))
     }
 
     registerUser(user) {
-        return axios.post(this.baseUrl + "/api/register", user)
+        return this.instance.post("/api/register", user)
     }
+
+    sendRequestWithRetry(method, url, data, headers) {
+        return this.sendRequest(method, url, data, headers).catch(error => {
+            if (error.response && error.response.status === 401) {
+                return authService.getToken().then(() => {
+                    return this.sendRequest(method, url, data, headers)
+                })
+            } else {
+                return Promise.reject(error);
+            }
+        })
+    }
+
+    sendRequest(method, url, data, headers) {
+        return this.instance({
+            method: method,
+            url: url,
+            headers: headerWithAuth(headers),
+            data: data
+        })
+    }
+}
+
+function headerWithAuth(headers) {
+    return Object.assign({Authorization: "Bearer " + authService.token}, headers)
 }
 
 const backendService = new BackendService();
