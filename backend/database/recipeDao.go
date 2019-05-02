@@ -12,9 +12,9 @@ type RecipeDao struct {
 func (dao *RecipeDao) Insert(uid int, m *models.Recipe) int {
 	db := GetConnection()
 
-	sql := `INSERT INTO public.recipe (name, url, description, userid)
-VALUES ($1, $2, $3, $4) RETURNING id`
-	result := db.QueryRowx(sql, m.Name, m.Url, *m.Description, uid)
+	sql := `INSERT INTO public.recipe (name, url, description, userid, directions)
+VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	result := db.QueryRowx(sql, m.Name, m.Url, *m.Description, uid, *m.Directions)
 	var value int
 	err := result.Scan(&value)
 	if err != nil {
@@ -29,7 +29,7 @@ func (dao *RecipeDao) GetAll(uid int) ([]models.Recipe, error) {
 	db := GetConnection()
 
 	var recipes = make([]models.Recipe, 0, 0)
-	sql := "SELECT id, name, url, description FROM recipe WHERE userId = $1 ORDER BY id"
+	sql := "SELECT id, name, url, description, directions FROM recipe WHERE userId = $1 ORDER BY id"
 	err := db.Select(&recipes, sql, uid)
 
 	if err != nil {
@@ -44,7 +44,7 @@ func (dao *RecipeDao) GetById(uid, id int64) *models.Recipe {
 	db := GetConnection()
 
 	var recipe models.Recipe
-	sql := "SELECT id, name, url, description FROM recipe WHERE id = $1 AND userId = $2"
+	sql := "SELECT id, name, url, description, directions FROM recipe WHERE id = $1 AND userId = $2"
 	err := db.Get(&recipe, sql, id, uid)
 	if err != nil {
 		logging.Error.Println(err)
@@ -57,8 +57,8 @@ func (dao *RecipeDao) GetById(uid, id int64) *models.Recipe {
 func (dao *RecipeDao) Update(uid int, recipe models.Recipe) error {
 	db := GetConnection()
 
-	sql := "UPDATE recipe SET name = $1, url = $2, description = $3 WHERE id = $4 AND userid = $5"
-	_, err := db.Exec(sql, recipe.Name, recipe.Url, recipe.Description, recipe.ID, uid)
+	sql := "UPDATE recipe SET name = $1, url = $2, description = $3, directions = $4 WHERE id = $5 AND userid = $6"
+	_, err := db.Exec(sql, recipe.Name, recipe.Url, recipe.Description, recipe.Directions, recipe.ID, uid)
 	if err != nil {
 		logging.Error.Println(err)
 		return err

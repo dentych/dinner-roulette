@@ -15,7 +15,14 @@
                         <input type="url" v-model="url" class="form-control" id="url"
                                placeholder="http://recipeplace.com/somerecipe">
                     </div>
-                    <growing-text-area @update="updateDescription"></growing-text-area>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" class="form-control" rows="10" v-model="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="directions">Directions</label>
+                        <textarea id="directions" class="form-control" rows="10" v-model="directions"></textarea>
+                    </div>
                     <button type="submit" class="btn btn-success float-right">Submit</button>
                 </form>
             </div>
@@ -25,26 +32,33 @@
 
 <script>
     import {backendService} from "../services/BackendService"
-    import GrowingTextArea from "../components/GrowingTextArea";
 
     export default {
         name: "AddRecipe",
-        components: {GrowingTextArea},
         data: function () {
             return {
                 name: null,
                 url: null,
-                description: null
+                description: null,
+                directions: null
             }
         },
         methods: {
             saveRecipe() {
-                backendService.saveRecipe({name: this.name, url: this.url, description: this.description}).then(() => {
+                backendService.saveRecipe({
+                    name: this.name,
+                    url: this.url,
+                    description: this.description,
+                    directions: this.directions
+                }).then(() => {
                     this.$router.push("/recipes")
                 });
             },
             updateDescription(data) {
                 this.description = data
+            },
+            updateDirections(data) {
+                this.directions = data
             }
         }
     }

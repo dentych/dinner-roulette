@@ -15,9 +15,16 @@
                         <input type="url" v-model="url" class="form-control" id="url"
                                placeholder="http://recipeplace.com/somerecipe">
                     </div>
-                    <growing-text-area :value="description" @update="updateDescription"></growing-text-area>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" rows="10" class="form-control" v-model="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="directions">Directions</label>
+                        <textarea id="directions" rows="10" class="form-control" v-model="directions"></textarea>
+                    </div>
                     <div class="float-right">
-                        <button type="submit" class="btn btn-secondary">Cancel</button>&nbsp;
+                        <button type="button" class="btn btn-secondary" @click="cancel">Cancel</button>&nbsp;
                         <button type="submit" class="btn btn-success">Submit</button>
                     </div>
                 </form>
@@ -28,11 +35,9 @@
 
 <script>
     import {backendService} from "../services/BackendService"
-    import GrowingTextArea from "../components/GrowingTextArea";
 
     export default {
         name: "edit-recipe",
-        components: {GrowingTextArea},
         data: function () {
             return {
                 id: this.$route.params.id,
@@ -40,7 +45,8 @@
                 url: null,
                 description: null,
                 loaded: false,
-                error: null
+                error: null,
+                directions: null
             }
         },
         mounted() {
@@ -49,6 +55,7 @@
                 this.name = recipe.name;
                 this.url = recipe.url;
                 this.description = recipe.description;
+                this.directions = recipe.directions;
                 this.loaded = true
             }).catch(err => {
                 this.error = err
@@ -59,7 +66,8 @@
                 let recipe = {
                     name: this.name,
                     url: this.url,
-                    description: this.description
+                    description: this.description,
+                    directions: this.directions
                 };
                 backendService.updateRecipe(this.id, recipe)
                     .then(() => this.$router.push("/recipes/" + this.id))
@@ -69,6 +77,9 @@
             },
             updateDescription(data) {
                 this.description = data
+            },
+            cancel() {
+                this.$router.go(-1)
             }
         }
     }

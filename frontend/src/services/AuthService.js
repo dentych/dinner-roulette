@@ -33,6 +33,8 @@ class AuthService {
                 this.token = res.data.access_token;
                 return Promise.resolve()
             }).catch(err => {
+                this.token = null;
+                localStorage.removeItem("authenticated");
                 return Promise.reject(err)
             })
     }
