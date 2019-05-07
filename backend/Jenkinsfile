@@ -1,16 +1,23 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGENAME = "dinnerdash/backend"
+    }
+
     stages {
         stage("Build backend docker image") {
             steps {
                 dir("backend") {
-                    withDockerRegistry([url: "", credentialsId: "docker-hub-dentych"]) {
-                        script {
-                            def img = docker.build("dinnerdash/backend")
-                            img.push()
-                        }
-                    }
+                    sh "docker build -t $IMAGENAME ."
+                }
+            }
+        }
+
+        stage("Push backend docker image to Docker Hub") {
+            steps {
+                withDockerRegistry([url: "", credentialsId: "docker-hub-dentych"]) {
+                    sh "docker push $IMAGENAME"
                 }
             }
         }
