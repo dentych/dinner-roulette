@@ -44,6 +44,7 @@ func (ctl *AuthController) Login(ctx *gin.Context) {
 			ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong email or password"})
 		default:
 			ctx.JSON(http.StatusInternalServerError, gin.H{"message": "database error", "error_code": "A1"})
+			logging.Error.Println("Database error: ", err)
 		}
 		return
 	}
