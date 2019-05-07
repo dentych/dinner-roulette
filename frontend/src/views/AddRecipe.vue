@@ -8,7 +8,7 @@
                     <div class="form-group">
                         <label for="name">Recipe name</label>
                         <input type="text" v-model="name" class="form-control" id="name"
-                               placeholder="Enter a name for your recipe" autocomplete="off">
+                               placeholder="Enter a name for your recipe" autocomplete="off" required>
                     </div>
                     <div class="form-group">
                         <label for="url">Recipe link</label>

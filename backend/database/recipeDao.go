@@ -14,7 +14,7 @@ func (dao *RecipeDao) Insert(uid int, m *models.Recipe) int {
 
 	sql := `INSERT INTO public.recipe (name, url, description, userid, directions)
 VALUES ($1, $2, $3, $4, $5) RETURNING id`
-	result := db.QueryRowx(sql, m.Name, m.Url, *m.Description, uid, *m.Directions)
+	result := db.QueryRowx(sql, m.Name, m.Url, m.Description, uid, m.Directions)
 	var value int
 	err := result.Scan(&value)
 	if err != nil {

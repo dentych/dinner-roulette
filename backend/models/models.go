@@ -5,8 +5,8 @@ import "time"
 type Recipe struct {
 	ID          int    `json:"id,omitempty"`
 	Name        string `json:"name"`
-	Url         string `json:"url"`
-	Description *string `json:"description"`
+	Url         *string `json:"url,omitempty"`
+	Description *string `json:"description,omitempty"`
 	Directions  *string `json:"directions,omitempty"`
 }
 
