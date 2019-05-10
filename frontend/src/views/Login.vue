@@ -25,6 +25,11 @@
 
     export default {
         name: "Login",
+        beforeMount(){
+          authService.getToken().then(() => {
+                this.$router.push({name: "home"})
+              })
+        },
         data() {
             return {
                 email: null,
@@ -47,7 +52,8 @@
                     }
                 })
             }
-        }
+        },
+
     }
 </script>
 
