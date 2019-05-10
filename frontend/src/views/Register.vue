@@ -38,6 +38,7 @@
 
 <script>
     import {backendService} from "../services/BackendService";
+    import {authService} from "../services/AuthService";
 
     export default {
         name: "Register",
@@ -63,7 +64,18 @@
                         lastName: this.lastName
                     };
 
-                    backendService.registerUser(user).then(() => this.$router.push("/"))
+                    backendService.registerUser(user).then(() => this.$router.push("/")).then(() =>
+                      authService.login(this.email, this.pass1).then(() => {
+                          return authService.getToken()
+                      }).then(() => {
+                          this.$router.push({name: "home"})
+                      }).catch(error => {
+                          if (error.response && error.response.status === 400) {
+                              this.errorMsg = "User failed to be created."
+                          } else {
+                              this.errorMsg = "Error logging in: " + JSON.stringify(error)
+                          }
+                      }))
                 } else {
                     this.error = "Passwords do not match!"
                 }
