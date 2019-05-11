@@ -9,7 +9,6 @@ import (
 type IngredientDao struct {
 }
 
-
 func (dao *IngredientDao) Insert(m *models.Ingredient) int {
 	db := GetConnection()
 
@@ -65,7 +64,8 @@ func (dao *IngredientDao) GetById(id int64) *models.Ingredient {
 	sql := "SELECT * FROM public.ingredient WHERE id = $1"
 	err := db.Get(&ingredient, sql, id)
 	if err != nil {
-		logging.Error.Println(err)
+    fmt.Println(err)
+    //logging.Error.Println(err)
 		return nil
 	}
 

@@ -12,6 +12,7 @@ CREATE TABLE public.recipe_ingredient (
     ingredient_id int  NOT NULL,
     recipe_id int  NOT NULL,
     amount int NOT NULL,
+    unit varchar(50) NOT NULL,
     CONSTRAINT recipe_ingredient_pk PRIMARY KEY (id)
 );
 ALTER TABLE public.recipe_ingredient ADD CONSTRAINT recipe_ingredient_ingredient
