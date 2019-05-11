@@ -8,6 +8,21 @@ type Recipe struct {
 	Url         *string `json:"url,omitempty"`
 	Description *string `json:"description,omitempty"`
 	Directions  *string `json:"directions,omitempty"`
+	//[]RecipeIngredient
+}
+
+type Ingredient struct {
+	ID 					int `json:"id,omitempty"`
+	Name        string `json:"name"`
+	KCAL				int  `json:"kcal,omitempty"`
+	//[]RecipeIngredient
+}
+
+type RecipeIngredient struct {
+	ID					int
+	Amount			int
+	RecRef			Recipe
+	IngRef			Ingredient
 }
 
 type User struct {
