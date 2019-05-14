@@ -36,6 +36,7 @@ func main() {
 
 	recipeDao := database.RecipeDao{}
 	userDao := database.UserDao{}
+	ingredientDao := database.IngredientDao{}
 
 	authController := controllers.NewAuthController(userDao, configuration.CookieHost)
 
@@ -75,6 +76,16 @@ func main() {
 		recipes, err := recipeDao.GetAll(c.GetInt("uid"))
 		if err != nil {
 			c.JSON(500, "error while getting recipes")
+			return
+		}
+
+		c.JSON(200, recipes)
+	})
+
+	protectedApiRouter.GET("/ingredients", func(c *gin.Context) {
+		recipes, err := ingredientDao.GetAll()
+		if err != nil {
+			c.JSON(500, "error while getting ingredients")
 			return
 		}
 

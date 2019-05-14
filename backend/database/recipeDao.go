@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"github.com/dentych/dinner-dash/logging"
 	"github.com/dentych/dinner-dash/models"
 	_ "github.com/lib/pq"
@@ -18,6 +19,7 @@ VALUES ($1, $2, $3, $4, $5) RETURNING id`
 	var value int
 	err := result.Scan(&value)
 	if err != nil {
+		fmt.Println(err)
 		return -1
 	}
 	m.ID = value
@@ -44,6 +46,7 @@ func (dao *RecipeDao) GetById(uid, id int64) *models.Recipe {
 	db := GetConnection()
 
 	var recipe models.Recipe
+
 	sql := "SELECT id, name, url, description, directions FROM recipe WHERE id = $1 AND userId = $2"
 	err := db.Get(&recipe, sql, id, uid)
 	if err != nil {

@@ -6,6 +6,10 @@ class BackendService {
         return this.sendRequestWithRetry("get", "/api/recipes")
             .then(res => Promise.resolve(res.data))
     }
+    getAllIngredients() {
+        return this.sendRequestWithRetry("get", "/api/ingredients")
+            .then(res => Promise.resolve(res.data))
+    }
 
     getRecipe(id) {
         return this.sendRequestWithRetry("get", "/api/recipes/" + id)
