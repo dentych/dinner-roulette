@@ -1,39 +1,81 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <form @submit.prevent="register">
-                    <div class="form-group">
-                        <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
-                               placeholder="Enter email"
-                               v-model="email">
-                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                            else.
-                        </small>
-                    </div>
-                    <div class="form-group">
-                        <label for="firstName">First name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="First name" v-model="firstName">
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Last name</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="First name" v-model="lastName">
-                    </div>
-                    <div class="form-group">
-                        <label for="pass1">Password</label>
-                        <input type="password" class="form-control" id="pass1" placeholder="Password" v-model="pass1">
-                    </div>
-                    <div class="form-group">
-                        <label for="pass2">Retype password</label>
-                        <input type="password" class="form-control" id="pass2" placeholder="Password" v-model="pass2">
-                    </div>
-                    <div class="alert alert-danger" v-if="error">{{error}}</div>
-                    <button type="submit" class="btn btn-success float-right">Submit</button>
-                </form>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <form @submit.prevent="register">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input
+              id="email"
+              v-model="email"
+              type="email"
+              class="form-control"
+              aria-describedby="emailHelp"
+              placeholder="Enter email"
+            >
+            <small
+              id="emailHelp"
+              class="form-text text-muted"
+            >We'll never share your email with anyone
+              else.
+            </small>
+          </div>
+          <div class="form-group">
+            <label for="firstName">First name</label>
+            <input
+              id="firstName"
+              v-model="firstName"
+              type="text"
+              class="form-control"
+              placeholder="First name"
+            >
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last name</label>
+            <input
+              id="lastName"
+              v-model="lastName"
+              type="text"
+              class="form-control"
+              placeholder="First name"
+            >
+          </div>
+          <div class="form-group">
+            <label for="pass1">Password</label>
+            <input
+              id="pass1"
+              v-model="pass1"
+              type="password"
+              class="form-control"
+              placeholder="Password"
+            >
+          </div>
+          <div class="form-group">
+            <label for="pass2">Retype password</label>
+            <input
+              id="pass2"
+              v-model="pass2"
+              type="password"
+              class="form-control"
+              placeholder="Password"
+            >
+          </div>
+          <div
+            v-if="error"
+            class="alert alert-danger"
+          >
+            {{ error }}
+          </div>
+          <button
+            type="submit"
+            class="btn btn-success float-right"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>

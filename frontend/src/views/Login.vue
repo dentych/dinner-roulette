@@ -1,23 +1,45 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-sm-4">
-                <form @submit.prevent="login">
-                    <div class="form-group">
-                        <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
-                               placeholder="Enter email" v-model="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="pwd">Password</label>
-                        <input type="password" class="form-control" id="pwd" placeholder="Password" v-model="password">
-                    </div>
-                    <div class="alert alert-danger" v-if="errorMsg">{{errorMsg}}</div>
-                    <button type="submit" class="btn btn-success float-right">Submit</button>
-                </form>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-4">
+        <form @submit.prevent="login">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input
+              id="email"
+              v-model="email"
+              type="email"
+              class="form-control"
+              aria-describedby="emailHelp"
+              placeholder="Enter email"
+            >
+          </div>
+          <div class="form-group">
+            <label for="pwd">Password</label>
+            <input
+              id="pwd"
+              v-model="password"
+              type="password"
+              class="form-control"
+              placeholder="Password"
+            >
+          </div>
+          <div
+            v-if="errorMsg"
+            class="alert alert-danger"
+          >
+            {{ errorMsg }}
+          </div>
+          <button
+            type="submit"
+            class="btn btn-success float-right"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -25,17 +47,17 @@
 
     export default {
         name: "Login",
-        beforeMount(){
-          authService.getToken().then(() => {
-                this.$router.push({name: "home"})
-              })
-        },
         data() {
             return {
                 email: null,
                 password: null,
                 errorMsg: null
             }
+        },
+        beforeMount(){
+          authService.getToken().then(() => {
+                this.$router.push({name: "home"})
+              })
         },
         methods: {
             login() {

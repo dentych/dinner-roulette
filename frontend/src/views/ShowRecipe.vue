@@ -1,29 +1,48 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col col-sm-8">
-                <div v-if="recipe">
-                    <h1>{{recipe.name}}</h1>
-                    <strong>Description</strong><br>
-                    <p class="recipe-text">{{recipe.description}}</p>
-                    <div v-if="recipe.directions">
-                        <hr>
-                        <strong>Directions</strong><br>
-                        <p class="recipe-text">{{recipe.directions}}</p>
-                    </div>
-                    <div v-if="recipe.url">
-                        <hr>
-                        <p v-if="recipe.url"><strong>Recipe link: </strong><a :href="recipe.url" target="_blank">{{recipe.url}}</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col col-sm-4">
-                <button class="btn btn-success" @click="editRecipe()">Edit</button>
-                <br><br>
-                <button class="btn btn-danger" @click="deleteRecipe()">Delete</button>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col col-sm-8">
+        <div v-if="recipe">
+          <h1>{{ recipe.name }}</h1>
+          <strong>Description</strong><br>
+          <p class="recipe-text">
+            {{ recipe.description }}
+          </p>
+          <div v-if="recipe.directions">
+            <hr>
+            <strong>Directions</strong><br>
+            <p class="recipe-text">
+              {{ recipe.directions }}
+            </p>
+          </div>
+          <div v-if="recipe.url">
+            <hr>
+            <p v-if="recipe.url">
+              <strong>Recipe link: </strong><a
+                :href="recipe.url"
+                target="_blank"
+              >{{ recipe.url }}</a>
+            </p>
+          </div>
         </div>
+      </div>
+      <div class="col col-sm-4">
+        <button
+          class="btn btn-success"
+          @click="editRecipe()"
+        >
+          Edit
+        </button>
+        <br><br>
+        <button
+          class="btn btn-danger"
+          @click="deleteRecipe()"
+        >
+          Delete
+        </button>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>

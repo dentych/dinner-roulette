@@ -1,43 +1,83 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-sm-center mb-4">
-            <div class="col col-sm-8 mb-2" v-if="loaded">
-                <h2>Edit recipe</h2>
-                <div class="alert alert-danger" v-if="error">{{error}}</div>
-                <form @submit.prevent="editRecipe">
-                    <div class="form-group">
-                        <label for="name">Recipe name</label>
-                        <input type="text" v-model="name" class="form-control" id="name"
-                               placeholder="Enter a name for your recipe" autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label for="url">Recipe link</label>
-                        <input type="url" v-model="url" class="form-control" id="url"
-                               placeholder="http://recipeplace.com/somerecipe">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea id="description" rows="10" class="form-control" v-model="description"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="directions">Directions</label>
-                        <textarea id="directions" rows="10" class="form-control" v-model="directions"></textarea>
-                    </div>
-                    <div class="float-right">
-                        <button type="button" class="btn btn-secondary" @click="cancel">Cancel</button>&nbsp;
-                        <button type="submit" class="btn btn-success">Submit</button>
-                    </div>
-                </form>
-            </div>
+  <div class="container">
+    <div class="row justify-content-sm-center mb-4">
+      <div
+        v-if="loaded"
+        class="col col-sm-8 mb-2"
+      >
+        <h2>Edit recipe</h2>
+        <div
+          v-if="error"
+          class="alert alert-danger"
+        >
+          {{ error }}
         </div>
+        <form @submit.prevent="editRecipe">
+          <div class="form-group">
+            <label for="name">Recipe name</label>
+            <input
+              id="name"
+              v-model="name"
+              type="text"
+              class="form-control"
+              placeholder="Enter a name for your recipe"
+              autocomplete="off"
+            >
+          </div>
+          <div class="form-group">
+            <label for="url">Recipe link</label>
+            <input
+              id="url"
+              v-model="url"
+              type="url"
+              class="form-control"
+              placeholder="http://recipeplace.com/somerecipe"
+            >
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              v-model="description"
+              rows="10"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="directions">Directions</label>
+            <textarea
+              id="directions"
+              v-model="directions"
+              rows="10"
+              class="form-control"
+            />
+          </div>
+          <div class="float-right">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="cancel"
+            >
+              Cancel
+            </button>&nbsp;
+            <button
+              type="submit"
+              class="btn btn-success"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
     import {backendService} from "../services/BackendService"
 
     export default {
-        name: "edit-recipe",
+        name: "EditRecipe",
         data: function () {
             return {
                 id: this.$route.params.id,

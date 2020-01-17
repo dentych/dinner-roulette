@@ -1,33 +1,60 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-sm-center">
-            <div class="col col-sm-8 mb-2">
-                <h2>Add a new recipe</h2>
-                <p>Fill out the below form to add a new recipe.</p>
-                <form @submit.prevent="saveRecipe">
-                    <div class="form-group">
-                        <label for="name">Recipe name</label>
-                        <input type="text" v-model="name" class="form-control" id="name"
-                               placeholder="Enter a name for your recipe" autocomplete="off" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="url">Recipe link</label>
-                        <input type="url" v-model="url" class="form-control" id="url"
-                               placeholder="http://recipeplace.com/somerecipe">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea id="description" class="form-control" rows="10" v-model="description"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="directions">Directions</label>
-                        <textarea id="directions" class="form-control" rows="10" v-model="directions"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success float-right">Submit</button>
-                </form>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row justify-content-sm-center">
+      <div class="col col-sm-8 mb-2">
+        <h2>Add a new recipe</h2>
+        <p>Fill out the below form to add a new recipe.</p>
+        <form @submit.prevent="saveRecipe">
+          <div class="form-group">
+            <label for="name">Recipe name</label>
+            <input
+              id="name"
+              v-model="name"
+              type="text"
+              class="form-control"
+              placeholder="Enter a name for your recipe"
+              autocomplete="off"
+              required
+            >
+          </div>
+          <div class="form-group">
+            <label for="url">Recipe link</label>
+            <input
+              id="url"
+              v-model="url"
+              type="url"
+              class="form-control"
+              placeholder="http://recipeplace.com/somerecipe"
+            >
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              v-model="description"
+              class="form-control"
+              rows="10"
+            />
+          </div>
+          <div class="form-group">
+            <label for="directions">Directions</label>
+            <textarea
+              id="directions"
+              v-model="directions"
+              class="form-control"
+              rows="10"
+            />
+          </div>
+          <button
+            type="submit"
+            class="btn btn-success float-right"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
