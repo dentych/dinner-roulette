@@ -1,9 +1,8 @@
 import axios from "axios";
 
-let token = null;
-let refreshRate = 4.5 * 60 * 1000;
-
 class AuthService {
+    token = null;
+    refreshRate = 4.5 * 60 * 1000;
 
     constructor() {
         this.getToken();

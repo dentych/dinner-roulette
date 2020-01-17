@@ -22,7 +22,7 @@ func main() {
 	configuration := config.FromEnv()
 
 	logging.Init()
-	database.Init(configuration.DbConfig)
+	//database.Init(configuration.DbConfig)
 	//database.RunMigrations(configuration.DbConfig)
 
 	router := gin.Default()
@@ -182,7 +182,11 @@ func main() {
 		c.JSON(200, mealplan)
 	})
 
-	err := router.Run(":8081")
+	router.StaticFile("/", "../frontend/dist/index.html")
+	router.StaticFile("/favicon.ico", "../frontend/dist/favicon.ico")
+	router.Static("/assets", "../frontend/dist/assets")
+
+	err := router.Run(":8080")
 	if err != nil {
 		log.Fatalf("Such error\n")
 	}

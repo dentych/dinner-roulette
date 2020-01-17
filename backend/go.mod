@@ -15,3 +15,5 @@ require (
 	golang.org/x/sys v0.0.0-20190310054646-10058d7d4faa // indirect
 	google.golang.org/appengine v1.5.0 // indirect
 )
+
+go 1.13
