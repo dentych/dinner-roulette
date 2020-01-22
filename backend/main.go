@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/dentych/dinner-dash/config"
-	"github.com/dentych/dinner-dash/controllers"
+	"github.com/dentych/dinner-dash/handlers"
 	"github.com/dentych/dinner-dash/database"
 	"github.com/dentych/dinner-dash/logging"
 	"github.com/dentych/dinner-dash/middleware"
@@ -36,8 +36,8 @@ func main() {
 	recipeDao := database.RecipeDao{}
 	userDao := database.UserDao{}
 
-	authController := controllers.NewAuthController(userDao, configuration.CookieHost)
-	recipeHandler := controllers.NewRecipeHandler(recipeDao)
+	authController := handlers.NewAuthController(userDao, configuration.CookieHost)
+	recipeHandler := handlers.NewRecipeHandler(recipeDao)
 
 	// Provide frontend files
 	router.StaticFile("/", "dist/index.html")
