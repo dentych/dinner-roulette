@@ -10,11 +10,10 @@ import (
 	"github.com/dentych/dinner-dash/models"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"log"
 	"math/rand"
 	"net/http"
-	"strconv"
+	"strings"
 	"time"
 )
 
@@ -22,8 +21,8 @@ func main() {
 	configuration := config.FromEnv()
 
 	logging.Init()
-	//database.Init(configuration.DbConfig)
-	//database.RunMigrations(configuration.DbConfig)
+	database.Init(configuration.DbConfig)
+	database.RunMigrations(configuration.DbConfig)
 
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
@@ -38,11 +37,25 @@ func main() {
 	userDao := database.UserDao{}
 
 	authController := controllers.NewAuthController(userDao, configuration.CookieHost)
+	recipeHandler := controllers.NewRecipeHandlers(recipeDao)
+
+	// Provide frontend files
+	router.StaticFile("/", "dist/index.html")
+	router.StaticFile("/favicon.ico", "dist/favicon.ico")
+	router.Static("/assets", "dist/assets")
+	router.NoRoute(func(c *gin.Context) {
+		if strings.Index(c.Request.RequestURI, "api") > -1 {
+			c.JSON(400, "Bad requesteroo")
+			return
+		}
+		c.File("../frontend/dist/index.html")
+	})
 
 	unprotectedApiRouter := router.Group("/api")
 	unprotectedApiRouter.GET("/", func(context *gin.Context) {
 		context.JSON(http.StatusOK, "OK")
 	})
+
 	unprotectedApiRouter.POST("/login", authController.Login)
 	unprotectedApiRouter.POST("/register", authController.Register)
 	unprotectedApiRouter.POST("/token", authController.Token)
@@ -53,103 +66,16 @@ func main() {
 		userid := c.GetInt("userid")
 		c.JSON(200, fmt.Sprintf("Authenticated as: %v", userid))
 	})
-	protectedApiRouter.POST("/recipes", func(c *gin.Context) {
-		var recipe models.Recipe
-		err := c.MustBindWith(&recipe, binding.JSON)
-		if err != nil {
-			logging.Error.Printf("Error: %s", err)
-			return
-		}
 
-		err = validateRecipe(recipe, false)
-		if err != nil {
-			c.JSON(400, err.Error())
-			return
-		}
+	protectedApiRouter.POST("/recipes", recipeHandler.CreateRecipe)
 
-		recipeDao.Insert(c.GetInt("uid"), &recipe)
+	protectedApiRouter.GET("/recipes", recipeHandler.GetRecipes)
 
-		c.JSON(201, recipe)
-	})
-	protectedApiRouter.GET("/recipes", func(c *gin.Context) {
-		recipes, err := recipeDao.GetAll(c.GetInt("uid"))
-		if err != nil {
-			c.JSON(500, "error while getting recipes")
-			return
-		}
+	protectedApiRouter.GET("/recipes/:id", recipeHandler.GetRecipeById)
 
-		c.JSON(200, recipes)
-	})
-	protectedApiRouter.GET("/recipes/:id", func(c *gin.Context) {
-		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-		if err != nil {
-			logging.Error.Printf("Error: %s", err)
-			c.JSON(400, "ID can't be parsed as int")
-			return
-		}
+	protectedApiRouter.PUT("/recipes/:id", recipeHandler.UpdateRecipe)
 
-		recipe := recipeDao.GetById(int64(c.GetInt("uid")), id)
-
-		if recipe != nil {
-			c.JSON(200, *recipe)
-		} else {
-			c.JSON(404, "not found")
-		}
-	})
-	protectedApiRouter.PUT("/recipes/:id", func(c *gin.Context) {
-		uid := c.GetInt("uid")
-		idParam := c.Param("id")
-		id, err := strconv.Atoi(idParam)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": "invalid ID"})
-			return
-		}
-
-		var recipe models.Recipe
-		err = c.MustBindWith(&recipe, binding.JSON)
-		if err != nil {
-			logging.Error.Printf("Could not parse recipe: %s", err)
-			c.JSON(400, err.Error())
-			return
-		}
-
-		err = validateRecipe(recipe, false)
-		if err != nil {
-			logging.Info.Printf("Could not validate recipe object: %s", err)
-			c.JSON(400, "invalid recipe object")
-			return
-		}
-
-		recipe.ID = id
-		err = recipeDao.Update(uid, recipe)
-		if err != nil {
-			logging.Error.Printf("Error when updating recipe: %s", err)
-			c.JSON(500, "error when updating recipe: "+err.Error())
-			return
-		}
-
-		c.JSON(200, "updated")
-	})
-	protectedApiRouter.DELETE("/recipes/:id", func(c *gin.Context) {
-		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-		if err != nil {
-			logging.Error.Printf("Error: %s", err)
-			c.JSON(400, "invalid or missing id missing from URL path (/api/recipe/{id})")
-			return
-		}
-
-		recipeDeleted, err := recipeDao.Delete(c.GetInt("uid"), id)
-		if err != nil {
-			logging.Error.Printf("Error deleting recipe: %s", err)
-			c.JSON(500, "error while deleting recipe")
-			return
-		}
-		if recipeDeleted {
-			c.JSON(200, "recipe deleted")
-		} else {
-			c.JSON(404, "recipe not found")
-		}
-	})
+	protectedApiRouter.DELETE("/recipes/:id", recipeHandler.DeleteRecipe)
 
 	protectedApiRouter.POST("/mealplan", func(c *gin.Context) {
 		recipes, err := recipeDao.GetAll(c.GetInt("uid"))
@@ -182,24 +108,8 @@ func main() {
 		c.JSON(200, mealplan)
 	})
 
-	router.StaticFile("/", "../frontend/dist/index.html")
-	router.StaticFile("/favicon.ico", "../frontend/dist/favicon.ico")
-	router.Static("/assets", "../frontend/dist/assets")
-
 	err := router.Run(":8080")
 	if err != nil {
 		log.Fatalf("Such error\n")
 	}
-}
-func validateRecipe(recipe models.Recipe, checkId bool) error {
-	if checkId {
-		if recipe.ID < 1 {
-			return fmt.Errorf("missing ID")
-		}
-	}
-	if len(recipe.Name) < 1 {
-		return fmt.Errorf("missing recipe name")
-	}
-
-	return nil
 }

@@ -20,3 +20,6 @@ vendor/
 # IDEA files and dirs
 .idea/
 *.iml
+
+# Frontend output directory
+dist/
