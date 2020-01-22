@@ -37,7 +37,7 @@ func main() {
 	userDao := database.UserDao{}
 
 	authController := controllers.NewAuthController(userDao, configuration.CookieHost)
-	recipeHandler := controllers.NewRecipeHandlers(recipeDao)
+	recipeHandler := controllers.NewRecipeHandler(recipeDao)
 
 	// Provide frontend files
 	router.StaticFile("/", "dist/index.html")

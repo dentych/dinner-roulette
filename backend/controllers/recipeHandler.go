@@ -11,20 +11,20 @@ import (
 	"strconv"
 )
 
-type RecipeHandlers struct {
+type RecipeHandler struct {
 	RecipeDao database.RecipeDao
 }
 
-func NewRecipeHandlers(recipeDao database.RecipeDao) *RecipeHandlers {
-	controller := RecipeHandlers{RecipeDao: recipeDao}
+func NewRecipeHandler(recipeDao database.RecipeDao) *RecipeHandler {
+	controller := RecipeHandler{RecipeDao: recipeDao}
 	return &controller
 }
 
-func (rc *RecipeHandlers) MealPlan(days int) {
+func (rc *RecipeHandler) MealPlan(days int) {
 
 }
 
-func (rc *RecipeHandlers) CreateRecipe(c *gin.Context) {
+func (rc *RecipeHandler) CreateRecipe(c *gin.Context) {
 	var recipe models.Recipe
 	err := c.MustBindWith(&recipe, binding.JSON)
 	if err != nil {
@@ -43,7 +43,7 @@ func (rc *RecipeHandlers) CreateRecipe(c *gin.Context) {
 	c.JSON(201, recipe)
 }
 
-func (rc RecipeHandlers) GetRecipes(c *gin.Context) {
+func (rc RecipeHandler) GetRecipes(c *gin.Context) {
 	recipes, err := rc.RecipeDao.GetAll(c.GetInt("uid"))
 	if err != nil {
 		c.JSON(500, "error while getting recipes")
@@ -53,7 +53,7 @@ func (rc RecipeHandlers) GetRecipes(c *gin.Context) {
 	c.JSON(200, recipes)
 }
 
-func (rc RecipeHandlers) GetRecipeById(c *gin.Context) {
+func (rc RecipeHandler) GetRecipeById(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		logging.Error.Printf("Error: %s", err)
@@ -70,7 +70,7 @@ func (rc RecipeHandlers) GetRecipeById(c *gin.Context) {
 	}
 }
 
-func (rc RecipeHandlers) UpdateRecipe(c *gin.Context) {
+func (rc RecipeHandler) UpdateRecipe(c *gin.Context) {
 	uid := c.GetInt("uid")
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -105,7 +105,7 @@ func (rc RecipeHandlers) UpdateRecipe(c *gin.Context) {
 	c.JSON(200, "updated")
 }
 
-func (rc RecipeHandlers) DeleteRecipe(c *gin.Context) {
+func (rc RecipeHandler) DeleteRecipe(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		logging.Error.Printf("Error: %s", err)

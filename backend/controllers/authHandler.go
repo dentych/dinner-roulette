@@ -14,16 +14,16 @@ import (
 	"strings"
 )
 
-type AuthController struct {
+type AuthHandler struct {
 	userDao    database.UserDao
 	cookieHost string
 }
 
-func NewAuthController(userDao database.UserDao, cookieHost string) *AuthController {
-	return &AuthController{userDao: userDao, cookieHost: cookieHost}
+func NewAuthController(userDao database.UserDao, cookieHost string) *AuthHandler {
+	return &AuthHandler{userDao: userDao, cookieHost: cookieHost}
 }
 
-func (ctl *AuthController) Login(ctx *gin.Context) {
+func (ctl *AuthHandler) Login(ctx *gin.Context) {
 	u := user{}
 	err := ctx.BindJSON(&u)
 	if err != nil {
@@ -71,7 +71,7 @@ func (ctl *AuthController) Login(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func (ctl *AuthController) Register(ctx *gin.Context) {
+func (ctl *AuthHandler) Register(ctx *gin.Context) {
 	u := user{}
 	err := ctx.BindJSON(&u)
 
@@ -132,7 +132,7 @@ func (ctl *AuthController) Register(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func (ctl *AuthController) Token(ctx *gin.Context) {
+func (ctl *AuthHandler) Token(ctx *gin.Context) {
 	var userIdString, session string
 	var err error
 	if userIdString, err = ctx.Cookie("userId"); err != nil {
@@ -171,18 +171,18 @@ func (ctl *AuthController) Token(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"access_token": token})
 }
 
-func (ctl *AuthController) Logout(ctx *gin.Context) {
+func (ctl *AuthHandler) Logout(ctx *gin.Context) {
 	ctl.unsetUserSessionCookies(ctx)
 
 	ctx.Status(http.StatusOK)
 }
 
-func (ctl *AuthController) setUserSessionCookies(ctx *gin.Context, userId int, session string) {
+func (ctl *AuthHandler) setUserSessionCookies(ctx *gin.Context, userId int, session string) {
 	setCookie(ctx, "userId", strconv.Itoa(userId), "/api/token", ctl.cookieHost, 86400)
 	setCookie(ctx, "session", session, "/api/token", ctl.cookieHost, 86400)
 }
 
-func (ctl *AuthController) unsetUserSessionCookies(ctx *gin.Context) {
+func (ctl *AuthHandler) unsetUserSessionCookies(ctx *gin.Context) {
 	setCookie(ctx, "userId", "", "/api/token", ctl.cookieHost, -1)
 	setCookie(ctx, "session", "", "/api/token", ctl.cookieHost, -1)
 }
